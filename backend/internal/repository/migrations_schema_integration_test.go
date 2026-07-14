@@ -121,7 +121,7 @@ func TestMigrationsRunner_IsIdempotent_AndSchemaIsUpToDate(t *testing.T) {
 	requireColumn(t, tx, "user_allowed_groups", "created_at", "timestamp with time zone", 0, false)
 }
 
-func TestMigrationsRunner_AuthIdentityAndPaymentSchemaStayAligned(t *testing.T) {
+func TestMigrationsRunner_AuthIdentitySchemaStaysAligned(t *testing.T) {
 	tx := testTx(t)
 
 	requireColumn(t, tx, "auth_identity_migration_reports", "report_type", "character varying", 80, false)
@@ -145,9 +145,8 @@ func TestMigrationsRunner_AuthIdentityAndPaymentSchemaStayAligned(t *testing.T) 
 	requireForeignKeyOnDelete(t, tx, "identity_adoption_decisions", "pending_auth_session_id", "pending_auth_sessions", "CASCADE")
 	requireForeignKeyOnDelete(t, tx, "identity_adoption_decisions", "identity_id", "auth_identities", "SET NULL")
 
-	requireIndex(t, tx, "payment_orders", "paymentorder_out_trade_no")
-	requirePartialUniqueIndexDefinition(t, tx, "payment_orders", "paymentorder_out_trade_no", "out_trade_no", "WHERE")
-	requireIndexAbsent(t, tx, "payment_orders", "paymentorder_out_trade_no_unique")
+	// payment_orders 已随销售侧移除（154_drop_sales_tables.sql），确认其确实被删除。
+	requireIndexAbsent(t, tx, "payment_orders", "paymentorder_out_trade_no")
 }
 
 func requireIndex(t *testing.T, tx *sql.Tx, table, index string) {

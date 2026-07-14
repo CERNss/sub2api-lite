@@ -206,7 +206,6 @@
 
         <EmailOAuthButtons
           :disabled="registrationActionDisabled"
-          :aff-code="formData.aff_code"
           :github-enabled="githubOAuthEnabled"
           :google-enabled="googleOAuthEnabled"
           :show-divider="false"
@@ -215,20 +214,17 @@
         <LinuxDoOAuthSection
           v-if="linuxdoOAuthEnabled"
           :disabled="registrationActionDisabled"
-          :aff-code="formData.aff_code"
           :show-divider="false"
         />
         <WechatOAuthSection
           v-if="wechatOAuthEnabled"
           :disabled="registrationActionDisabled"
-          :aff-code="formData.aff_code"
           :show-divider="false"
         />
         <OidcOAuthSection
           v-if="oidcOAuthEnabled"
           :disabled="registrationActionDisabled"
           :provider-name="oidcOAuthProviderName"
-          :aff-code="formData.aff_code"
           :show-divider="false"
         />
       </div>
@@ -251,7 +247,7 @@
 
 <script setup lang="ts">
 import { computed, ref, reactive, onMounted, onUnmounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { AuthLayout } from '@/components/layout'
 import LinuxDoOAuthSection from '@/components/auth/LinuxDoOAuthSection.vue'
@@ -273,11 +269,6 @@ import {
   isRegistrationEmailSuffixAllowed,
   normalizeRegistrationEmailSuffixWhitelist
 } from '@/utils/registrationEmailPolicy'
-import {
-  clearAffiliateReferralCode,
-  loadAffiliateReferralCode,
-  resolveAffiliateReferralCode
-} from '@/utils/oauthAffiliate'
 import type { LoginAgreementDocument } from '@/types'
 
 const { t, locale } = useI18n()
@@ -286,7 +277,6 @@ const LOGIN_AGREEMENT_STORAGE_KEY = 'sub2api_login_agreement_consent'
 // ==================== Router & Stores ====================
 
 const router = useRouter()
-const route = useRoute()
 const authStore = useAuthStore()
 const appStore = useAppStore()
 
@@ -337,7 +327,6 @@ const formData = reactive({
   email: '',
   password: '',
   invitation_code: '',
-  aff_code: ''
 })
 
 const errors = reactive({
@@ -379,18 +368,9 @@ watch(validationToastMessage, (value, previousValue) => {
   }
 })
 
-function syncAffiliateReferralCode(): string {
-  const code = resolveAffiliateReferralCode(route.query.aff, route.query.aff_code)
-  if (code) {
-    formData.aff_code = code
-  }
-  return code
-}
-
 // ==================== Lifecycle ====================
 
 onMounted(async () => {
-  syncAffiliateReferralCode()
 
   try {
     const settings = await getPublicSettings()
@@ -410,8 +390,6 @@ onMounted(async () => {
       settings.registration_email_suffix_whitelist || []
     )
     applyLoginAgreementSettings(settings)
-
-    syncAffiliateReferralCode()
   } catch (error) {
     console.error('Failed to load public settings:', error)
     loginAgreementEnabled.value = false
@@ -420,13 +398,6 @@ onMounted(async () => {
     settingsLoaded.value = true
   }
 })
-
-watch(
-  () => [route.query.aff, route.query.aff_code],
-  () => {
-    syncAffiliateReferralCode()
-  }
-)
 
 onUnmounted(() => {
   if (invitationValidateTimeout) {
@@ -695,10 +666,6 @@ async function handleRegister(): Promise<void> {
   isLoading.value = true
 
   try {
-    const affCode = formData.aff_code.trim() || loadAffiliateReferralCode()
-    if (affCode) {
-      formData.aff_code = affCode
-    }
 
     // If email verification is enabled, redirect to verification page
     if (emailVerifyEnabled.value) {
@@ -710,7 +677,6 @@ async function handleRegister(): Promise<void> {
           password: formData.password,
           turnstile_token: turnstileToken.value,
           invitation_code: formData.invitation_code || undefined,
-          ...(affCode ? { aff_code: affCode } : {})
         })
       )
 
@@ -725,9 +691,7 @@ async function handleRegister(): Promise<void> {
       password: formData.password,
       turnstile_token: turnstileEnabled.value ? turnstileToken.value : undefined,
       invitation_code: formData.invitation_code || undefined,
-      ...(affCode ? { aff_code: affCode } : {})
     })
-    clearAffiliateReferralCode()
 
     // Show success toast
     appStore.showSuccess(t('auth.accountCreatedSuccess', { siteName: siteName.value }))

@@ -322,7 +322,6 @@ export const useAppStore = defineStore('app', () => {
         email_verify_enabled: false,
         force_email_on_third_party_signup: false,
         registration_email_suffix_whitelist: [],
-        promo_code_enabled: true,
         password_reset_enabled: false,
         invitation_code_enabled: false,
         turnstile_enabled: false,
@@ -335,7 +334,6 @@ export const useAppStore = defineStore('app', () => {
         doc_url: docUrl.value,
         home_content: '',
         hide_ccs_import_button: false,
-        payment_enabled: false,
         table_default_page_size: 20,
         table_page_size_options: [10, 20, 50, 100],
         custom_menu_items: [],
@@ -359,7 +357,6 @@ export const useAppStore = defineStore('app', () => {
         available_channels_enabled: false,
         risk_control_enabled: false,
         service_quota_enabled: false,
-        affiliate_enabled: false,
         allow_user_view_error_requests: false,
       }
     }

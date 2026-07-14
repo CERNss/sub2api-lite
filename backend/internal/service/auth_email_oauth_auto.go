@@ -142,7 +142,6 @@ func (s *AuthService) loginOrRegisterVerifiedEmailOAuth(
 		if err := s.ApplyProviderDefaultSettingsOnFirstBind(ctx, user.ID, providerType); err != nil {
 			logger.LegacyPrintf("service.auth", "[Auth] Failed to apply %s first bind defaults: %v", providerType, err)
 		}
-	} else {
 	}
 	s.RecordSuccessfulLogin(ctx, user.ID)
 

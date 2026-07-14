@@ -223,3 +223,5 @@ func TestAdminService_BatchSetGroupRPMOverrides(t *testing.T) {
 		require.Zero(t, repo.rpmSyncedGroupID)
 	})
 }
+
+func ptrFloat(f float64) *float64 { return &f }

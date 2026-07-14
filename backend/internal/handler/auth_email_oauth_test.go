@@ -188,11 +188,6 @@ func TestParseGitHubOAuthProfileRejectsPublicEmailWhenEmailsEndpointFails(t *tes
 	require.Contains(t, err.Error(), "github emails endpoint status 403")
 }
 
-type oauthEmailAffiliateBindCall struct {
-	userID    int64
-	inviterID int64
-}
-
 func findSetCookieValue(cookies []*http.Cookie, name string) string {
 	for _, cookie := range cookies {
 		if cookie != nil && strings.EqualFold(cookie.Name, name) && cookie.MaxAge >= 0 {

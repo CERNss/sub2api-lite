@@ -246,10 +246,6 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		OpenAICodexUserAgent:                     settings.OpenAICodexUserAgent,
 		OpenAIAllowClaudeCodeCodexPlugin:         settings.OpenAIAllowClaudeCodeCodexPlugin,
 		WebSearchEmulationEnabled:                settings.WebSearchEmulationEnabled,
-		PaymentVisibleMethodAlipaySource:         settings.PaymentVisibleMethodAlipaySource,
-		PaymentVisibleMethodWxpaySource:          settings.PaymentVisibleMethodWxpaySource,
-		PaymentVisibleMethodAlipayEnabled:        settings.PaymentVisibleMethodAlipayEnabled,
-		PaymentVisibleMethodWxpayEnabled:         settings.PaymentVisibleMethodWxpayEnabled,
 		OpenAIAdvancedSchedulerEnabled:           settings.OpenAIAdvancedSchedulerEnabled,
 		BalanceLowNotifyEnabled:                  settings.BalanceLowNotifyEnabled,
 		BalanceLowNotifyThreshold:                settings.BalanceLowNotifyThreshold,
@@ -262,8 +258,6 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		ChannelMonitorDefaultIntervalSeconds: settings.ChannelMonitorDefaultIntervalSeconds,
 
 		AvailableChannelsEnabled: settings.AvailableChannelsEnabled,
-
-		AffiliateEnabled: settings.AffiliateEnabled,
 
 		AllowUserViewErrorRequests: settings.AllowUserViewErrorRequests,
 	}
@@ -354,7 +348,6 @@ type UpdateSettingsRequest struct {
 	RegistrationEnabled              bool                         `json:"registration_enabled"`
 	EmailVerifyEnabled               bool                         `json:"email_verify_enabled"`
 	RegistrationEmailSuffixWhitelist []string                     `json:"registration_email_suffix_whitelist"`
-	PromoCodeEnabled                 bool                         `json:"promo_code_enabled"`
 	PasswordResetEnabled             bool                         `json:"password_reset_enabled"`
 	FrontendURL                      string                       `json:"frontend_url"`
 	InvitationCodeEnabled            bool                         `json:"invitation_code_enabled"`
@@ -478,10 +471,6 @@ type UpdateSettingsRequest struct {
 	// 默认配置
 	DefaultConcurrency                        int                               `json:"default_concurrency"`
 	DefaultBalance                            float64                           `json:"default_balance"`
-	AffiliateRebateRate                       *float64                          `json:"affiliate_rebate_rate"`
-	AffiliateRebateFreezeHours                *int                              `json:"affiliate_rebate_freeze_hours"`
-	AffiliateRebateDurationDays               *int                              `json:"affiliate_rebate_duration_days"`
-	AffiliateRebatePerInviteeCap              *float64                          `json:"affiliate_rebate_per_invitee_cap"`
 	DefaultUserRPMLimit                       int                               `json:"default_user_rpm_limit"`
 	DefaultSubscriptions                      []dto.DefaultSubscriptionSetting  `json:"default_subscriptions"`
 	AuthSourceDefaultEmailBalance             *float64                          `json:"auth_source_default_email_balance"`
@@ -560,12 +549,6 @@ type UpdateSettingsRequest struct {
 	OpenAICodexUserAgent                   *string `json:"openai_codex_user_agent"`
 	OpenAIAllowClaudeCodeCodexPlugin       *bool   `json:"openai_allow_claude_code_codex_plugin"`
 
-	// Payment visible method routing
-	PaymentVisibleMethodAlipaySource  *string `json:"payment_visible_method_alipay_source"`
-	PaymentVisibleMethodWxpaySource   *string `json:"payment_visible_method_wxpay_source"`
-	PaymentVisibleMethodAlipayEnabled *bool   `json:"payment_visible_method_alipay_enabled"`
-	PaymentVisibleMethodWxpayEnabled  *bool   `json:"payment_visible_method_wxpay_enabled"`
-
 	// OpenAI account scheduling
 	OpenAIAdvancedSchedulerEnabled *bool `json:"openai_advanced_scheduler_enabled"`
 
@@ -577,32 +560,9 @@ type UpdateSettingsRequest struct {
 	AccountQuotaNotifyEnabled       *bool                   `json:"account_quota_notify_enabled"`
 	AccountQuotaNotifyEmails        *[]dto.NotifyEmailEntry `json:"account_quota_notify_emails"`
 
-	// Payment configuration (integrated into settings, full replace)
-	PaymentEnabled                   *bool    `json:"payment_enabled"`
-	PaymentMinAmount                 *float64 `json:"payment_min_amount"`
-	PaymentMaxAmount                 *float64 `json:"payment_max_amount"`
-	PaymentDailyLimit                *float64 `json:"payment_daily_limit"`
-	PaymentOrderTimeoutMin           *int     `json:"payment_order_timeout_minutes"`
-	PaymentMaxPendingOrders          *int     `json:"payment_max_pending_orders"`
-	PaymentEnabledTypes              []string `json:"payment_enabled_types"`
-	PaymentBalanceDisabled           *bool    `json:"payment_balance_disabled"`
-	PaymentBalanceRechargeMultiplier *float64 `json:"payment_balance_recharge_multiplier"`
-	PaymentRechargeFeeRate           *float64 `json:"payment_recharge_fee_rate"`
-	PaymentLoadBalanceStrat          *string  `json:"payment_load_balance_strategy"`
-	PaymentProductNamePrefix         *string  `json:"payment_product_name_prefix"`
-	PaymentProductNameSuffix         *string  `json:"payment_product_name_suffix"`
-	PaymentHelpImageURL              *string  `json:"payment_help_image_url"`
-	PaymentHelpText                  *string  `json:"payment_help_text"`
-
 	// Cancel rate limit
-	PaymentCancelRateLimitEnabled *bool   `json:"payment_cancel_rate_limit_enabled"`
-	PaymentCancelRateLimitMax     *int    `json:"payment_cancel_rate_limit_max"`
-	PaymentCancelRateLimitWindow  *int    `json:"payment_cancel_rate_limit_window"`
-	PaymentCancelRateLimitUnit    *string `json:"payment_cancel_rate_limit_unit"`
-	PaymentCancelRateLimitMode    *string `json:"payment_cancel_rate_limit_window_mode"`
 
 	// Force Alipay mobile clients to use QR code payment instead of mobile redirect
-	PaymentAlipayForceQRCode *bool `json:"payment_alipay_force_qrcode"`
 
 	// Channel Monitor feature switch
 	ChannelMonitorEnabled                *bool `json:"channel_monitor_enabled"`
@@ -610,9 +570,6 @@ type UpdateSettingsRequest struct {
 
 	// Available Channels feature switch (user-facing)
 	AvailableChannelsEnabled *bool `json:"available_channels_enabled"`
-
-	// Affiliate (邀请返利) feature switch
-	AffiliateEnabled *bool `json:"affiliate_enabled"`
 
 	// 风控中心功能开关
 	RiskControlEnabled *bool `json:"risk_control_enabled"`
@@ -665,43 +622,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 	}
 	if req.DefaultBalance < 0 {
 		req.DefaultBalance = 0
-	}
-	affiliateRebateRate := previousSettings.AffiliateRebateRate
-	if req.AffiliateRebateRate != nil {
-		affiliateRebateRate = *req.AffiliateRebateRate
-	}
-	if affiliateRebateRate < service.AffiliateRebateRateMin {
-		affiliateRebateRate = service.AffiliateRebateRateMin
-	}
-	if affiliateRebateRate > service.AffiliateRebateRateMax {
-		affiliateRebateRate = service.AffiliateRebateRateMax
-	}
-	affiliateRebateFreezeHours := previousSettings.AffiliateRebateFreezeHours
-	if req.AffiliateRebateFreezeHours != nil {
-		affiliateRebateFreezeHours = *req.AffiliateRebateFreezeHours
-	}
-	if affiliateRebateFreezeHours < 0 {
-		affiliateRebateFreezeHours = service.AffiliateRebateFreezeHoursDefault
-	}
-	if affiliateRebateFreezeHours > service.AffiliateRebateFreezeHoursMax {
-		affiliateRebateFreezeHours = service.AffiliateRebateFreezeHoursMax
-	}
-	affiliateRebateDurationDays := previousSettings.AffiliateRebateDurationDays
-	if req.AffiliateRebateDurationDays != nil {
-		affiliateRebateDurationDays = *req.AffiliateRebateDurationDays
-	}
-	if affiliateRebateDurationDays < 0 {
-		affiliateRebateDurationDays = service.AffiliateRebateDurationDaysDefault
-	}
-	if affiliateRebateDurationDays > service.AffiliateRebateDurationDaysMax {
-		affiliateRebateDurationDays = service.AffiliateRebateDurationDaysMax
-	}
-	affiliateRebatePerInviteeCap := previousSettings.AffiliateRebatePerInviteeCap
-	if req.AffiliateRebatePerInviteeCap != nil {
-		affiliateRebatePerInviteeCap = *req.AffiliateRebatePerInviteeCap
-	}
-	if affiliateRebatePerInviteeCap < 0 {
-		affiliateRebatePerInviteeCap = service.AffiliateRebatePerInviteeCapDefault
 	}
 	// 通用表格配置：兼容旧客户端未传字段时保留当前值。
 	if req.TableDefaultPageSize <= 0 {
@@ -1681,30 +1601,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 			}
 			return previousSettings.OpenAIAllowClaudeCodeCodexPlugin
 		}(),
-		PaymentVisibleMethodAlipaySource: func() string {
-			if req.PaymentVisibleMethodAlipaySource != nil {
-				return strings.TrimSpace(*req.PaymentVisibleMethodAlipaySource)
-			}
-			return previousSettings.PaymentVisibleMethodAlipaySource
-		}(),
-		PaymentVisibleMethodWxpaySource: func() string {
-			if req.PaymentVisibleMethodWxpaySource != nil {
-				return strings.TrimSpace(*req.PaymentVisibleMethodWxpaySource)
-			}
-			return previousSettings.PaymentVisibleMethodWxpaySource
-		}(),
-		PaymentVisibleMethodAlipayEnabled: func() bool {
-			if req.PaymentVisibleMethodAlipayEnabled != nil {
-				return *req.PaymentVisibleMethodAlipayEnabled
-			}
-			return previousSettings.PaymentVisibleMethodAlipayEnabled
-		}(),
-		PaymentVisibleMethodWxpayEnabled: func() bool {
-			if req.PaymentVisibleMethodWxpayEnabled != nil {
-				return *req.PaymentVisibleMethodWxpayEnabled
-			}
-			return previousSettings.PaymentVisibleMethodWxpayEnabled
-		}(),
 		OpenAIAdvancedSchedulerEnabled: func() bool {
 			if req.OpenAIAdvancedSchedulerEnabled != nil {
 				return *req.OpenAIAdvancedSchedulerEnabled
@@ -1764,12 +1660,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 				return *req.AvailableChannelsEnabled
 			}
 			return previousSettings.AvailableChannelsEnabled
-		}(),
-		AffiliateEnabled: func() bool {
-			if req.AffiliateEnabled != nil {
-				return *req.AffiliateEnabled
-			}
-			return previousSettings.AffiliateEnabled
 		}(),
 		RiskControlEnabled: func() bool {
 			if req.RiskControlEnabled != nil {
@@ -2024,10 +1914,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		AntigravityUserAgentVersion:              updatedSettings.AntigravityUserAgentVersion,
 		OpenAICodexUserAgent:                     updatedSettings.OpenAICodexUserAgent,
 		OpenAIAllowClaudeCodeCodexPlugin:         updatedSettings.OpenAIAllowClaudeCodeCodexPlugin,
-		PaymentVisibleMethodAlipaySource:         updatedSettings.PaymentVisibleMethodAlipaySource,
-		PaymentVisibleMethodWxpaySource:          updatedSettings.PaymentVisibleMethodWxpaySource,
-		PaymentVisibleMethodAlipayEnabled:        updatedSettings.PaymentVisibleMethodAlipayEnabled,
-		PaymentVisibleMethodWxpayEnabled:         updatedSettings.PaymentVisibleMethodWxpayEnabled,
 		OpenAIAdvancedSchedulerEnabled:           updatedSettings.OpenAIAdvancedSchedulerEnabled,
 		BalanceLowNotifyEnabled:                  updatedSettings.BalanceLowNotifyEnabled,
 		BalanceLowNotifyThreshold:                updatedSettings.BalanceLowNotifyThreshold,
@@ -2040,8 +1926,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		ChannelMonitorDefaultIntervalSeconds: updatedSettings.ChannelMonitorDefaultIntervalSeconds,
 
 		AvailableChannelsEnabled: updatedSettings.AvailableChannelsEnabled,
-
-		AffiliateEnabled: updatedSettings.AffiliateEnabled,
 
 		RiskControlEnabled:          updatedSettings.RiskControlEnabled,
 		CyberSessionBlockEnabled:    updatedSettings.CyberSessionBlockEnabled,
@@ -2063,7 +1947,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 	response.Success(c, systemSettingsResponseData(payload, updatedAuthSourceDefaults))
 }
 
-// hasPaymentFields returns true if any payment-related field was explicitly provided.
 // mapDingTalkValidateError maps ValidateDingTalkConfig errors to machine-readable reason codes.
 func mapDingTalkValidateError(err error) string {
 	switch {
@@ -2106,9 +1989,6 @@ func diffSettings(before *service.SystemSettings, after *service.SystemSettings,
 	}
 	if !equalStringSlice(before.RegistrationEmailSuffixWhitelist, after.RegistrationEmailSuffixWhitelist) {
 		changed = append(changed, "registration_email_suffix_whitelist")
-	}
-	if before.PromoCodeEnabled != after.PromoCodeEnabled {
-		changed = append(changed, "promo_code_enabled")
 	}
 	if before.InvitationCodeEnabled != after.InvitationCodeEnabled {
 		changed = append(changed, "invitation_code_enabled")
@@ -2365,18 +2245,6 @@ func diffSettings(before *service.SystemSettings, after *service.SystemSettings,
 	if before.DefaultBalance != after.DefaultBalance {
 		changed = append(changed, "default_balance")
 	}
-	if before.AffiliateRebateRate != after.AffiliateRebateRate {
-		changed = append(changed, "affiliate_rebate_rate")
-	}
-	if before.AffiliateRebateFreezeHours != after.AffiliateRebateFreezeHours {
-		changed = append(changed, "affiliate_rebate_freeze_hours")
-	}
-	if before.AffiliateRebateDurationDays != after.AffiliateRebateDurationDays {
-		changed = append(changed, "affiliate_rebate_duration_days")
-	}
-	if before.AffiliateRebatePerInviteeCap != after.AffiliateRebatePerInviteeCap {
-		changed = append(changed, "affiliate_rebate_per_invitee_cap")
-	}
 	if !equalDefaultSubscriptions(before.DefaultSubscriptions, after.DefaultSubscriptions) {
 		changed = append(changed, "default_subscriptions")
 	}
@@ -2476,18 +2344,6 @@ func diffSettings(before *service.SystemSettings, after *service.SystemSettings,
 	if before.OpenAIAllowClaudeCodeCodexPlugin != after.OpenAIAllowClaudeCodeCodexPlugin {
 		changed = append(changed, "openai_allow_claude_code_codex_plugin")
 	}
-	if before.PaymentVisibleMethodAlipaySource != after.PaymentVisibleMethodAlipaySource {
-		changed = append(changed, "payment_visible_method_alipay_source")
-	}
-	if before.PaymentVisibleMethodWxpaySource != after.PaymentVisibleMethodWxpaySource {
-		changed = append(changed, "payment_visible_method_wxpay_source")
-	}
-	if before.PaymentVisibleMethodAlipayEnabled != after.PaymentVisibleMethodAlipayEnabled {
-		changed = append(changed, "payment_visible_method_alipay_enabled")
-	}
-	if before.PaymentVisibleMethodWxpayEnabled != after.PaymentVisibleMethodWxpayEnabled {
-		changed = append(changed, "payment_visible_method_wxpay_enabled")
-	}
 	if before.OpenAIAdvancedSchedulerEnabled != after.OpenAIAdvancedSchedulerEnabled {
 		changed = append(changed, "openai_advanced_scheduler_enabled")
 	}
@@ -2518,9 +2374,6 @@ func diffSettings(before *service.SystemSettings, after *service.SystemSettings,
 	}
 	if before.AvailableChannelsEnabled != after.AvailableChannelsEnabled {
 		changed = append(changed, "available_channels_enabled")
-	}
-	if before.AffiliateEnabled != after.AffiliateEnabled {
-		changed = append(changed, "affiliate_enabled")
 	}
 	if before.RiskControlEnabled != after.RiskControlEnabled {
 		changed = append(changed, "risk_control_enabled")

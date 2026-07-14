@@ -121,9 +121,7 @@ export interface RegisterRequest {
   password: string
   verify_code?: string
   turnstile_token?: string
-  promo_code?: string
   invitation_code?: string
-  aff_code?: string
 }
 
 export interface AffiliateInvitee {
@@ -132,24 +130,6 @@ export interface AffiliateInvitee {
   username: string
   created_at?: string
   total_rebate: number
-}
-
-export interface UserAffiliateDetail {
-  user_id: number
-  aff_code: string
-  inviter_id?: number | null
-  aff_count: number
-  aff_quota: number
-  aff_frozen_quota: number
-  aff_history_quota: number
-  /** 当前用户作为邀请人时实际生效的返利比例（专属覆盖全局）。0-100。 */
-  effective_rebate_rate_percent: number
-  invitees: AffiliateInvitee[]
-}
-
-export interface AffiliateTransferResponse {
-  transferred_quota: number
-  balance: number
 }
 
 export interface SendVerifyCodeRequest {
@@ -192,7 +172,6 @@ export interface PublicSettings {
   email_verify_enabled: boolean
   force_email_on_third_party_signup: boolean
   registration_email_suffix_whitelist: string[]
-  promo_code_enabled: boolean
   password_reset_enabled: boolean
   invitation_code_enabled: boolean
   login_agreement_enabled?: boolean
@@ -211,7 +190,6 @@ export interface PublicSettings {
   home_content: string
   hide_ccs_import_button: boolean
   client_templates?: ClientTemplatesConfig
-  payment_enabled: boolean
   risk_control_enabled: boolean
   table_default_page_size: number
   table_page_size_options: number[]
@@ -236,7 +214,6 @@ export interface PublicSettings {
   channel_monitor_default_interval_seconds: number
   available_channels_enabled: boolean
   service_quota_enabled: boolean
-  affiliate_enabled: boolean
   allow_user_view_error_requests?: boolean
 }
 
@@ -1829,15 +1806,6 @@ export interface PromoCode {
   notes: string | null
   created_at: string
   updated_at: string
-}
-
-export interface PromoCodeUsage {
-  id: number
-  promo_code_id: number
-  user_id: number
-  bonus_amount: number
-  used_at: string
-  user?: User
 }
 
 export interface CreatePromoCodeRequest {

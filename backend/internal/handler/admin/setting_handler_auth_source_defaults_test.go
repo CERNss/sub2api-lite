@@ -129,7 +129,6 @@ func TestSettingHandler_GetSettings_InjectsAuthSourceDefaults(t *testing.T) {
 	repo := &settingHandlerRepoStub{
 		values: map[string]string{
 			service.SettingKeyRegistrationEnabled:                 "true",
-			service.SettingKeyPromoCodeEnabled:                    "true",
 			service.SettingKeyAuthSourceDefaultEmailBalance:       "9.5",
 			service.SettingKeyAuthSourceDefaultEmailConcurrency:   "8",
 			service.SettingKeyAuthSourceDefaultEmailSubscriptions: `[{"group_id":31,"validity_days":15}]`,
@@ -164,7 +163,6 @@ func TestSettingHandler_UpdateSettings_PreservesOmittedAuthSourceDefaults(t *tes
 	repo := &settingHandlerRepoStub{
 		values: map[string]string{
 			service.SettingKeyRegistrationEnabled:                    "false",
-			service.SettingKeyPromoCodeEnabled:                       "true",
 			service.SettingKeyAuthSourceDefaultEmailBalance:          "9.5",
 			service.SettingKeyAuthSourceDefaultEmailConcurrency:      "8",
 			service.SettingKeyAuthSourceDefaultEmailSubscriptions:    `[{"group_id":31,"validity_days":15}]`,
@@ -178,7 +176,6 @@ func TestSettingHandler_UpdateSettings_PreservesOmittedAuthSourceDefaults(t *tes
 
 	body := map[string]any{
 		"registration_enabled":              true,
-		"promo_code_enabled":                true,
 		"auth_source_default_email_balance": 12.75,
 	}
 	rawBody, err := json.Marshal(body)
@@ -210,7 +207,6 @@ func TestSettingHandler_UpdateSettings_PersistsExplicitFalseOIDCCompatibilityFla
 	gin.SetMode(gin.TestMode)
 	repo := &settingHandlerRepoStub{
 		values: map[string]string{
-			service.SettingKeyPromoCodeEnabled:               "true",
 			service.SettingKeyOIDCConnectEnabled:             "true",
 			service.SettingKeyOIDCConnectProviderName:        "OIDC",
 			service.SettingKeyOIDCConnectClientID:            "oidc-client",
@@ -234,7 +230,6 @@ func TestSettingHandler_UpdateSettings_PersistsExplicitFalseOIDCCompatibilityFla
 	handler := NewSettingHandler(svc, nil, nil, nil, nil)
 
 	body := map[string]any{
-		"promo_code_enabled":                true,
 		"oidc_connect_enabled":              true,
 		"oidc_connect_use_pkce":             false,
 		"oidc_connect_validate_id_token":    false,
@@ -266,7 +261,6 @@ func TestSettingHandler_UpdateSettings_DoesNotSolidifyImplicitOIDCSecurityDefaul
 	gin.SetMode(gin.TestMode)
 	repo := &settingHandlerRepoStub{
 		values: map[string]string{
-			service.SettingKeyPromoCodeEnabled:                "true",
 			service.SettingKeyOIDCConnectEnabled:              "true",
 			service.SettingKeyOIDCConnectProviderName:         "OIDC",
 			service.SettingKeyOIDCConnectClientID:             "oidc-client",
@@ -313,7 +307,6 @@ func TestSettingHandler_UpdateSettings_DoesNotSolidifyImplicitOIDCSecurityDefaul
 	handler := NewSettingHandler(svc, nil, nil, nil, nil)
 
 	body := map[string]any{
-		"promo_code_enabled":   true,
 		"oidc_connect_enabled": true,
 	}
 	rawBody, err := json.Marshal(body)
@@ -336,7 +329,6 @@ func TestSettingHandler_UpdateSettings_DoesNotPersistPartialSystemSettingsWhenAu
 	repo := &failingAuthSourceSettingsRepoStub{
 		values: map[string]string{
 			service.SettingKeyRegistrationEnabled:                 "false",
-			service.SettingKeyPromoCodeEnabled:                    "true",
 			service.SettingKeyAuthSourceDefaultEmailBalance:       "9.5",
 			service.SettingKeyAuthSourceDefaultEmailConcurrency:   "8",
 			service.SettingKeyAuthSourceDefaultEmailSubscriptions: `[{"group_id":31,"validity_days":15}]`,
@@ -348,7 +340,6 @@ func TestSettingHandler_UpdateSettings_DoesNotPersistPartialSystemSettingsWhenAu
 
 	body := map[string]any{
 		"registration_enabled":              true,
-		"promo_code_enabled":                true,
 		"auth_source_default_email_balance": 12.75,
 	}
 	rawBody, err := json.Marshal(body)
