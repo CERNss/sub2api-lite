@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	dbent "github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/ent/authidentity"
-	"github.com/Wei-Shaw/sub2api/ent/authidentitychannel"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/pagination"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	dbent "github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/ent/authidentity"
+	"github.com/CERNss/sub2api-lite/ent/authidentitychannel"
+	"github.com/CERNss/sub2api-lite/internal/pkg/pagination"
+	"github.com/CERNss/sub2api-lite/internal/service"
 	"github.com/stretchr/testify/suite"
 )
 

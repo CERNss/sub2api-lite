@@ -128,7 +128,7 @@
 
                 <a
                   v-if="authStore.isAdmin"
-                  href="https://github.com/Wei-Shaw/sub2api"
+                  href="https://github.com/CERNss/sub2api-lite"
                   target="_blank"
                   rel="noopener noreferrer"
                   @click="closeDropdown"

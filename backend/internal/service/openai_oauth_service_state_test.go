@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Wei-Shaw/sub2api/internal/pkg/openai"
+	"github.com/CERNss/sub2api-lite/internal/pkg/openai"
 	"github.com/stretchr/testify/require"
 )
 

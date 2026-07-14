@@ -8,14 +8,14 @@ import (
 	"strings"
 	"time"
 
-	dbent "github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/ent/apikey"
-	"github.com/Wei-Shaw/sub2api/ent/group"
-	"github.com/Wei-Shaw/sub2api/ent/schema/mixins"
-	"github.com/Wei-Shaw/sub2api/ent/user"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	dbent "github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/ent/apikey"
+	"github.com/CERNss/sub2api-lite/ent/group"
+	"github.com/CERNss/sub2api-lite/ent/schema/mixins"
+	"github.com/CERNss/sub2api-lite/ent/user"
+	"github.com/CERNss/sub2api-lite/internal/service"
 
-	"github.com/Wei-Shaw/sub2api/internal/pkg/pagination"
+	"github.com/CERNss/sub2api-lite/internal/pkg/pagination"
 
 	entsql "entgo.io/ent/dialect/sql"
 )

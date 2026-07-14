@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/internal/config"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/timezone"
-	"github.com/Wei-Shaw/sub2api/migrations"
+	"github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/internal/config"
+	"github.com/CERNss/sub2api-lite/internal/pkg/timezone"
+	"github.com/CERNss/sub2api-lite/migrations"
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"

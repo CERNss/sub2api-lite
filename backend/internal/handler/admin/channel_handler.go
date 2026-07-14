@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"strings"
 
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/pagination"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
+	"github.com/CERNss/sub2api-lite/internal/pkg/pagination"
+	"github.com/CERNss/sub2api-lite/internal/pkg/response"
+	"github.com/CERNss/sub2api-lite/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

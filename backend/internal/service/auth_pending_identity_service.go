@@ -14,11 +14,11 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect"
-	dbent "github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/ent/identityadoptiondecision"
-	"github.com/Wei-Shaw/sub2api/ent/pendingauthsession"
-	dbpredicate "github.com/Wei-Shaw/sub2api/ent/predicate"
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
+	dbent "github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/ent/identityadoptiondecision"
+	"github.com/CERNss/sub2api-lite/ent/pendingauthsession"
+	dbpredicate "github.com/CERNss/sub2api-lite/ent/predicate"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
 
 	entsql "entgo.io/ent/dialect/sql"
 )

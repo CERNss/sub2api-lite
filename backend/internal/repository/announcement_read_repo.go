@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	dbent "github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/ent/announcementread"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	dbent "github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/ent/announcementread"
+	"github.com/CERNss/sub2api-lite/internal/service"
 )
 
 type announcementReadRepository struct {

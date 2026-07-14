@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/Wei-Shaw/sub2api/internal/pkg/antigravity"
+	"github.com/CERNss/sub2api-lite/internal/pkg/antigravity"
 	"github.com/stretchr/testify/require"
 )
 

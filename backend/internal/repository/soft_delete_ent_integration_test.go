@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
-	dbent "github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/ent/apikey"
-	"github.com/Wei-Shaw/sub2api/ent/schema/mixins"
-	"github.com/Wei-Shaw/sub2api/ent/usersubscription"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	dbent "github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/ent/apikey"
+	"github.com/CERNss/sub2api-lite/ent/schema/mixins"
+	"github.com/CERNss/sub2api-lite/ent/usersubscription"
+	"github.com/CERNss/sub2api-lite/internal/service"
 	"github.com/stretchr/testify/require"
 )
 

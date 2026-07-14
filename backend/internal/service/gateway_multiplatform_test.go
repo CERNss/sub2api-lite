@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Wei-Shaw/sub2api/internal/config"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/ctxkey"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/pagination"
+	"github.com/CERNss/sub2api-lite/internal/config"
+	"github.com/CERNss/sub2api-lite/internal/pkg/ctxkey"
+	"github.com/CERNss/sub2api-lite/internal/pkg/pagination"
 	"github.com/stretchr/testify/require"
 )
 

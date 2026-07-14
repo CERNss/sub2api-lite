@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/Wei-Shaw/sub2api/internal/config"
+	"github.com/CERNss/sub2api-lite/internal/config"
 	"github.com/gin-gonic/gin"
 )
 

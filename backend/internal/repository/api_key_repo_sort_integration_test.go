@@ -3,8 +3,8 @@
 package repository
 
 import (
-	"github.com/Wei-Shaw/sub2api/internal/pkg/pagination"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	"github.com/CERNss/sub2api-lite/internal/pkg/pagination"
+	"github.com/CERNss/sub2api-lite/internal/service"
 )
 
 func (s *APIKeyRepoSuite) TestListByUserID_SortByNameAsc() {

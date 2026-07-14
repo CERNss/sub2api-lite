@@ -3,7 +3,7 @@ package service
 import (
 	"math"
 
-	"github.com/Wei-Shaw/sub2api/internal/payment"
+	"github.com/CERNss/sub2api-lite/internal/payment"
 	"github.com/shopspring/decimal"
 )
 

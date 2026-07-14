@@ -18,7 +18,7 @@ import (
 	"strings"
 	"time"
 
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
 )
 
 var (
@@ -28,7 +28,7 @@ var (
 const (
 	updateCacheKey = "update_check_cache"
 	updateCacheTTL = 1200 // 20 minutes
-	githubRepo     = "Wei-Shaw/sub2api"
+	githubRepo     = "CERNss/sub2api-lite"
 
 	// Security: allowed download domains for updates
 	allowedDownloadHost = "github.com"

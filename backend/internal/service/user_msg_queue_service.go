@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Wei-Shaw/sub2api/internal/config"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/logger"
+	"github.com/CERNss/sub2api-lite/internal/config"
+	"github.com/CERNss/sub2api-lite/internal/pkg/logger"
 	"github.com/tidwall/gjson"
 )
 

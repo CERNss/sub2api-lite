@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/Wei-Shaw/sub2api/ent/errorpassthroughrule"
-	"github.com/Wei-Shaw/sub2api/ent/predicate"
+	"github.com/CERNss/sub2api-lite/ent/errorpassthroughrule"
+	"github.com/CERNss/sub2api-lite/ent/predicate"
 )
 
 // ErrorPassthroughRuleQuery is the builder for querying ErrorPassthroughRule entities.

@@ -6,13 +6,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Wei-Shaw/sub2api/internal/config"
-	"github.com/Wei-Shaw/sub2api/internal/handler/dto"
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/ip"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
-	middleware2 "github.com/Wei-Shaw/sub2api/internal/server/middleware"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	"github.com/CERNss/sub2api-lite/internal/config"
+	"github.com/CERNss/sub2api-lite/internal/handler/dto"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
+	"github.com/CERNss/sub2api-lite/internal/pkg/ip"
+	"github.com/CERNss/sub2api-lite/internal/pkg/response"
+	middleware2 "github.com/CERNss/sub2api-lite/internal/server/middleware"
+	"github.com/CERNss/sub2api-lite/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

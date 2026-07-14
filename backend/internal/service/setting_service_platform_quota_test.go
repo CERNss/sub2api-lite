@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Wei-Shaw/sub2api/internal/config"
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
+	"github.com/CERNss/sub2api-lite/internal/config"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 

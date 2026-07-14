@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Wei-Shaw/sub2api/internal/payment"
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
+	"github.com/CERNss/sub2api-lite/internal/payment"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 

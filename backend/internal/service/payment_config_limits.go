@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	dbent "github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/ent/paymentproviderinstance"
-	"github.com/Wei-Shaw/sub2api/internal/payment"
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
+	dbent "github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/ent/paymentproviderinstance"
+	"github.com/CERNss/sub2api-lite/internal/payment"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
 )
 
 // GetAvailableMethodLimits collects all payment types from enabled provider

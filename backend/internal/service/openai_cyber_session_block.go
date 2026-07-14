@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/Wei-Shaw/sub2api/internal/pkg/logger"
+	"github.com/CERNss/sub2api-lite/internal/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 

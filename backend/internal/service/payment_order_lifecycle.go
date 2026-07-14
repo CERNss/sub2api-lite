@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	dbent "github.com/Wei-Shaw/sub2api/ent"
-	"github.com/Wei-Shaw/sub2api/ent/paymentauditlog"
-	"github.com/Wei-Shaw/sub2api/ent/paymentorder"
-	"github.com/Wei-Shaw/sub2api/internal/payment"
-	"github.com/Wei-Shaw/sub2api/internal/payment/provider"
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
+	dbent "github.com/CERNss/sub2api-lite/ent"
+	"github.com/CERNss/sub2api-lite/ent/paymentauditlog"
+	"github.com/CERNss/sub2api-lite/ent/paymentorder"
+	"github.com/CERNss/sub2api-lite/internal/payment"
+	"github.com/CERNss/sub2api-lite/internal/payment/provider"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
 )
 
 // --- Cancel & Expire ---

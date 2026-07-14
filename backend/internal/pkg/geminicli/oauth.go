@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
+	infraerrors "github.com/CERNss/sub2api-lite/internal/pkg/errors"
 )
 
 type OAuthConfig struct {

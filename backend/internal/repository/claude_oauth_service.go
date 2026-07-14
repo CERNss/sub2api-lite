@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Wei-Shaw/sub2api/internal/pkg/logger"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/oauth"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/proxyurl"
-	"github.com/Wei-Shaw/sub2api/internal/service"
-	"github.com/Wei-Shaw/sub2api/internal/util/logredact"
+	"github.com/CERNss/sub2api-lite/internal/pkg/logger"
+	"github.com/CERNss/sub2api-lite/internal/pkg/oauth"
+	"github.com/CERNss/sub2api-lite/internal/pkg/proxyurl"
+	"github.com/CERNss/sub2api-lite/internal/service"
+	"github.com/CERNss/sub2api-lite/internal/util/logredact"
 
 	"github.com/imroc/req/v3"
 )

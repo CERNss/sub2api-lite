@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Wei-Shaw/sub2api/internal/handler/dto"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	"github.com/CERNss/sub2api-lite/internal/handler/dto"
+	"github.com/CERNss/sub2api-lite/internal/pkg/response"
+	"github.com/CERNss/sub2api-lite/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

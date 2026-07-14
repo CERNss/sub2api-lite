@@ -15,13 +15,13 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/Wei-Shaw/sub2api/ent/runtime"
-	"github.com/Wei-Shaw/sub2api/internal/config"
-	"github.com/Wei-Shaw/sub2api/internal/handler"
-	"github.com/Wei-Shaw/sub2api/internal/pkg/logger"
-	"github.com/Wei-Shaw/sub2api/internal/server/middleware"
-	"github.com/Wei-Shaw/sub2api/internal/setup"
-	"github.com/Wei-Shaw/sub2api/internal/web"
+	_ "github.com/CERNss/sub2api-lite/ent/runtime"
+	"github.com/CERNss/sub2api-lite/internal/config"
+	"github.com/CERNss/sub2api-lite/internal/handler"
+	"github.com/CERNss/sub2api-lite/internal/pkg/logger"
+	"github.com/CERNss/sub2api-lite/internal/server/middleware"
+	"github.com/CERNss/sub2api-lite/internal/setup"
+	"github.com/CERNss/sub2api-lite/internal/web"
 
 	"github.com/gin-gonic/gin"
 )

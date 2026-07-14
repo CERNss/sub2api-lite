@@ -15,7 +15,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/Wei-Shaw/sub2api/internal/config"
+	"github.com/CERNss/sub2api-lite/internal/config"
 )
 
 // ─── Mocks ───

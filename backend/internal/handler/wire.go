@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/Wei-Shaw/sub2api/internal/handler/admin"
-	"github.com/Wei-Shaw/sub2api/internal/service"
+	"github.com/CERNss/sub2api-lite/internal/handler/admin"
+	"github.com/CERNss/sub2api-lite/internal/service"
 
 	"github.com/google/wire"
 )
