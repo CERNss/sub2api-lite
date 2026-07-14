@@ -48,7 +48,6 @@ func (h *SettingHandler) GetPublicSettings(c *gin.Context) {
 		ForceEmailOnThirdPartySignup:     settings.ForceEmailOnThirdPartySignup,
 		RegistrationEmailSuffixWhitelist: settings.RegistrationEmailSuffixWhitelist,
 		PasswordResetEnabled:             settings.PasswordResetEnabled,
-		InvitationCodeEnabled:            settings.InvitationCodeEnabled,
 		TotpEnabled:                      settings.TotpEnabled,
 		LoginAgreementEnabled:            settings.LoginAgreementEnabled,
 		LoginAgreementMode:               settings.LoginAgreementMode,

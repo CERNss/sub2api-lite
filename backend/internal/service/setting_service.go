@@ -774,7 +774,6 @@ func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings
 		SettingKeyForceEmailOnThirdPartySignup,
 		SettingKeyRegistrationEmailSuffixWhitelist,
 		SettingKeyPasswordResetEnabled,
-		SettingKeyInvitationCodeEnabled,
 		SettingKeyTotpEnabled,
 		SettingKeyLoginAgreementEnabled,
 		SettingKeyLoginAgreementMode,
@@ -896,7 +895,6 @@ func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings
 		ForceEmailOnThirdPartySignup:     settings[SettingKeyForceEmailOnThirdPartySignup] == "true",
 		RegistrationEmailSuffixWhitelist: registrationEmailSuffixWhitelist,
 		PasswordResetEnabled:             passwordResetEnabled,
-		InvitationCodeEnabled:            settings[SettingKeyInvitationCodeEnabled] == "true",
 		TotpEnabled:                      settings[SettingKeyTotpEnabled] == "true",
 		LoginAgreementEnabled:            settings[SettingKeyLoginAgreementEnabled] == "true" && len(loginAgreementDocuments) > 0,
 		LoginAgreementMode:               normalizeLoginAgreementMode(settings[SettingKeyLoginAgreementMode]),
@@ -1206,7 +1204,6 @@ type PublicSettingsInjectionPayload struct {
 	EmailVerifyEnabled               bool                     `json:"email_verify_enabled"`
 	RegistrationEmailSuffixWhitelist []string                 `json:"registration_email_suffix_whitelist"`
 	PasswordResetEnabled             bool                     `json:"password_reset_enabled"`
-	InvitationCodeEnabled            bool                     `json:"invitation_code_enabled"`
 	TotpEnabled                      bool                     `json:"totp_enabled"`
 	LoginAgreementEnabled            bool                     `json:"login_agreement_enabled"`
 	LoginAgreementMode               string                   `json:"login_agreement_mode"`
@@ -1270,7 +1267,6 @@ func (s *SettingService) GetPublicSettingsForInjection(ctx context.Context) (any
 		EmailVerifyEnabled:               settings.EmailVerifyEnabled,
 		RegistrationEmailSuffixWhitelist: settings.RegistrationEmailSuffixWhitelist,
 		PasswordResetEnabled:             settings.PasswordResetEnabled,
-		InvitationCodeEnabled:            settings.InvitationCodeEnabled,
 		TotpEnabled:                      settings.TotpEnabled,
 		LoginAgreementEnabled:            settings.LoginAgreementEnabled,
 		LoginAgreementMode:               settings.LoginAgreementMode,
@@ -1730,7 +1726,6 @@ func (s *SettingService) buildSystemSettingsUpdates(ctx context.Context, setting
 	updates[SettingKeyRegistrationEmailSuffixWhitelist] = string(registrationEmailSuffixWhitelistJSON)
 	updates[SettingKeyPasswordResetEnabled] = strconv.FormatBool(settings.PasswordResetEnabled)
 	updates[SettingKeyFrontendURL] = settings.FrontendURL
-	updates[SettingKeyInvitationCodeEnabled] = strconv.FormatBool(settings.InvitationCodeEnabled)
 	updates[SettingKeyTotpEnabled] = strconv.FormatBool(settings.TotpEnabled)
 	settings.LoginAgreementMode = normalizeLoginAgreementMode(settings.LoginAgreementMode)
 	settings.LoginAgreementUpdatedAt = strings.TrimSpace(settings.LoginAgreementUpdatedAt)
@@ -2454,15 +2449,6 @@ func (s *SettingService) GetRegistrationEmailSuffixWhitelist(ctx context.Context
 	return ParseRegistrationEmailSuffixWhitelist(value)
 }
 
-// IsInvitationCodeEnabled 检查是否启用邀请码注册功能
-func (s *SettingService) IsInvitationCodeEnabled(ctx context.Context) bool {
-	value, err := s.settingRepo.GetValue(ctx, SettingKeyInvitationCodeEnabled)
-	if err != nil {
-		return false // 默认关闭
-	}
-	return value == "true"
-}
-
 // GetCustomMenuItemsRaw returns the raw JSON string of custom_menu_items setting.
 func (s *SettingService) GetCustomMenuItemsRaw(ctx context.Context) string {
 	value, err := s.settingRepo.GetValue(ctx, SettingKeyCustomMenuItems)
@@ -2869,7 +2855,6 @@ func (s *SettingService) parseSettings(settings map[string]string) *SystemSettin
 		RegistrationEmailSuffixWhitelist: ParseRegistrationEmailSuffixWhitelist(settings[SettingKeyRegistrationEmailSuffixWhitelist]),
 		PasswordResetEnabled:             emailVerifyEnabled && settings[SettingKeyPasswordResetEnabled] == "true",
 		FrontendURL:                      settings[SettingKeyFrontendURL],
-		InvitationCodeEnabled:            settings[SettingKeyInvitationCodeEnabled] == "true",
 		TotpEnabled:                      settings[SettingKeyTotpEnabled] == "true",
 		LoginAgreementEnabled:            settings[SettingKeyLoginAgreementEnabled] == "true",
 		LoginAgreementMode:               normalizeLoginAgreementMode(settings[SettingKeyLoginAgreementMode]),

@@ -322,7 +322,7 @@ func TestAuthService_Register_EmailVerifyEnabledButServiceNotConfigured(t *testi
 	}, nil, nil)
 
 	// 应返回服务不可用错误，而不是允许绕过验证
-	_, _, err := service.RegisterWithVerification(context.Background(), "user@test.com", "password", "any-code", "", "", "")
+	_, _, err := service.RegisterWithVerification(context.Background(), "user@test.com", "password", "any-code")
 	require.ErrorIs(t, err, ErrServiceUnavailable)
 }
 
@@ -334,7 +334,7 @@ func TestAuthService_Register_EmailVerifyRequired(t *testing.T) {
 		SettingKeyEmailVerifyEnabled:  "true",
 	}, cache, nil)
 
-	_, _, err := service.RegisterWithVerification(context.Background(), "user@test.com", "password", "", "", "", "")
+	_, _, err := service.RegisterWithVerification(context.Background(), "user@test.com", "password", "")
 	require.ErrorIs(t, err, ErrEmailVerifyRequired)
 }
 
@@ -348,7 +348,7 @@ func TestAuthService_Register_EmailVerifyInvalid(t *testing.T) {
 		SettingKeyEmailVerifyEnabled:  "true",
 	}, cache, nil)
 
-	_, _, err := service.RegisterWithVerification(context.Background(), "user@test.com", "password", "wrong", "", "", "")
+	_, _, err := service.RegisterWithVerification(context.Background(), "user@test.com", "password", "wrong")
 	require.ErrorIs(t, err, ErrInvalidVerifyCode)
 	require.ErrorContains(t, err, "verify code")
 }
@@ -700,7 +700,7 @@ func TestAuthService_LoginOrRegisterOAuthWithTokenPair_UsesLinuxDoAuthSourceDefa
 	service.defaultSubAssigner = assigner
 	service.refreshTokenCache = &refreshTokenCacheStub{}
 
-	tokenPair, user, err := service.LoginOrRegisterOAuthWithTokenPair(context.Background(), "linuxdo-123@linuxdo-connect.invalid", "linuxdo_user", "", "", "linuxdo")
+	tokenPair, user, err := service.LoginOrRegisterOAuthWithTokenPair(context.Background(), "linuxdo-123@linuxdo-connect.invalid", "linuxdo_user", "linuxdo")
 	require.NoError(t, err)
 	require.NotNil(t, tokenPair)
 	require.NotNil(t, user)
@@ -736,7 +736,7 @@ func TestAuthService_LoginOrRegisterOAuthWithTokenPair_ExistingUserDoesNotGrantA
 	service.defaultSubAssigner = assigner
 	service.refreshTokenCache = &refreshTokenCacheStub{}
 
-	tokenPair, user, err := service.LoginOrRegisterOAuthWithTokenPair(context.Background(), existing.Email, "linuxdo_user", "", "", "linuxdo")
+	tokenPair, user, err := service.LoginOrRegisterOAuthWithTokenPair(context.Background(), existing.Email, "linuxdo_user", "linuxdo")
 	require.NoError(t, err)
 	require.NotNil(t, tokenPair)
 	require.Equal(t, existing.ID, user.ID)

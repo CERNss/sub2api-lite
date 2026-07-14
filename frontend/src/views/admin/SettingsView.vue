@@ -1466,20 +1466,6 @@
               </div>
 
 
-              <!-- Invitation Code -->
-              <div
-                class="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-dark-700"
-              >
-                <div>
-                  <label class="font-medium text-gray-900 dark:text-white">{{
-                    t("admin.settings.registration.invitationCode")
-                  }}</label>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ t("admin.settings.registration.invitationCodeHint") }}
-                  </p>
-                </div>
-                <Toggle v-model="form.invitation_code_enabled" />
-              </div>
               <!-- Password Reset - Only show when email verification is enabled -->
               <div
                 v-if="form.email_verify_enabled"
@@ -6726,7 +6712,6 @@ const form = reactive<SettingsForm>({
   registration_enabled: true,
   email_verify_enabled: false,
   registration_email_suffix_whitelist: [],
-  invitation_code_enabled: false,
   password_reset_enabled: false,
   totp_enabled: false,
   totp_encryption_key_configured: false,
@@ -7880,7 +7865,6 @@ async function saveSettings() {
         registrationEmailSuffixWhitelistTags.value.map((suffix) =>
           suffix.startsWith("*.") ? suffix : `@${suffix}`,
         ),
-      invitation_code_enabled: form.invitation_code_enabled,
       password_reset_enabled: form.password_reset_enabled,
       totp_enabled: form.totp_enabled,
       login_agreement_enabled: form.login_agreement_enabled,

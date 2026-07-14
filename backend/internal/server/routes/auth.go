@@ -56,10 +56,6 @@ func RegisterAuthRoutes(
 		}), h.Auth.RefreshToken)
 		// 登出接口（公开，允许未认证用户调用以撤销Refresh Token）
 		auth.POST("/logout", h.Auth.Logout)
-		// 邀请码验证接口添加速率限制：每分钟最多 10 次（Redis 故障时 fail-close）
-		auth.POST("/validate-invitation-code", rateLimiter.LimitWithOptions("validate-invitation", 10, time.Minute, middleware.RateLimitOptions{
-			FailureMode: middleware.RateLimitFailClose,
-		}), h.Auth.ValidateInvitationCode)
 		// 忘记密码接口添加速率限制：每分钟最多 5 次（Redis 故障时 fail-close）
 		auth.POST("/forgot-password", rateLimiter.LimitWithOptions("forgot-password", 5, time.Minute, middleware.RateLimitOptions{
 			FailureMode: middleware.RateLimitFailClose,

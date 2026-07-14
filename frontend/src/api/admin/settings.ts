@@ -368,7 +368,6 @@ export interface SystemSettings {
   registration_email_suffix_whitelist: string[];
   password_reset_enabled: boolean;
   frontend_url: string;
-  invitation_code_enabled: boolean;
   totp_enabled: boolean; // TOTP 双因素认证
   totp_encryption_key_configured: boolean; // TOTP 加密密钥是否已配置
   login_agreement_enabled: boolean;
@@ -607,7 +606,6 @@ export interface UpdateSettingsRequest {
   registration_email_suffix_whitelist?: string[];
   password_reset_enabled?: boolean;
   frontend_url?: string;
-  invitation_code_enabled?: boolean;
   totp_enabled?: boolean; // TOTP 双因素认证
   login_agreement_enabled?: boolean;
   login_agreement_mode?: "modal" | "checkbox" | string;

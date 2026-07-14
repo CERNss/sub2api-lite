@@ -335,7 +335,6 @@ describe('EmailVerifyView', () => {
       email: 'fresh@example.com',
       password: 'secret-123',
       verify_code: '123456',
-      invitation_code: undefined,
       adopt_display_name: undefined,
       adopt_avatar: undefined,
     })
@@ -421,7 +420,6 @@ describe('EmailVerifyView', () => {
       JSON.stringify({
         email: 'normal@example.com',
         password: 'secret-456',
-        invitation_code: 'INVITE',
       })
     )
     registerMock.mockResolvedValue({})
@@ -447,7 +445,6 @@ describe('EmailVerifyView', () => {
       password: 'secret-456',
       verify_code: '654321',
       turnstile_token: undefined,
-      invitation_code: 'INVITE',
     })
     expect(apiClientPostMock).not.toHaveBeenCalled()
     expect(pushMock).toHaveBeenCalledWith('/dashboard')

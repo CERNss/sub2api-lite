@@ -63,8 +63,6 @@ func TestEmailOAuthAuto_SnapshotsPlatformQuotaDefaults(t *testing.T) {
 		"newoauth@example.com",
 		"newoauth",
 		"github",
-		"", // invitationCode
-		"", // affiliateCode
 	)
 	require.NoError(t, err)
 	require.NotNil(t, user)

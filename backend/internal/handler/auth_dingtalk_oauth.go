@@ -688,7 +688,6 @@ func buildDingTalkAuthorizeURL(cfg config.DingTalkConnectConfig, state string) (
 // ─── Complete Registration ─────────────────────────────────────────────────
 
 type completeDingTalkOAuthRequest struct {
-	InvitationCode   string `json:"invitation_code" binding:"required"`
 	AffCode          string `json:"aff_code,omitempty"`
 	AdoptDisplayName *bool  `json:"adopt_display_name,omitempty"`
 	AdoptAvatar      *bool  `json:"adopt_avatar,omitempty"`
@@ -781,13 +780,10 @@ func (h *AuthHandler) CompleteDingTalkOAuthRegistration(c *gin.Context) {
 		response.ErrorFrom(c, err)
 		return
 	}
-	tokenPair, user, err := h.authService.LoginOrRegisterOAuthWithTokenPairAndPromoCode(
+	tokenPair, user, err := h.authService.LoginOrRegisterOAuthWithTokenPair(
 		c.Request.Context(),
 		email,
 		username,
-		req.InvitationCode,
-		req.AffCode,
-		pendingOAuthPromoCode(session),
 		"dingtalk",
 	)
 	if err != nil {

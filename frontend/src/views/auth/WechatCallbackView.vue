@@ -17,7 +17,6 @@
       <transition name="fade">
         <div
           v-if="
-            needsInvitation ||
             needsChooser ||
             needsAdoptionConfirmation ||
             needsCreateAccount ||
@@ -77,73 +76,7 @@
             </div>
           </div>
 
-          <template v-if="needsInvitation">
-            <p class="text-sm text-gray-700 dark:text-gray-300">
-              {{ t('auth.oidc.invitationRequired', { providerName }) }}
-            </p>
-            <div>
-              <input
-                v-model="invitationCode"
-                type="text"
-                class="input w-full"
-                :placeholder="t('auth.invitationCodePlaceholder')"
-                :disabled="isSubmitting"
-                @keyup.enter="handleSubmitInvitation"
-              />
-            </div>
-            <button
-              class="btn btn-primary w-full"
-              :disabled="isSubmitting || !invitationCode.trim()"
-              @click="handleSubmitInvitation"
-            >
-              {{
-                isSubmitting
-                  ? t('auth.oidc.completing')
-                : t('auth.oidc.completeRegistration')
-              }}
-            </button>
-
-            <div
-              class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-dark-600 dark:bg-dark-800/60"
-            >
-              <div class="space-y-3">
-                <div class="space-y-1">
-                  <p class="text-sm font-medium text-gray-900 dark:text-white">
-                    {{ t('auth.alreadyHaveAccount') }}
-                  </p>
-                  <p class="text-xs text-gray-500 dark:text-dark-400">
-                    {{
-                      hasCurrentAuthToken
-                        ? t('auth.oauthFlow.bindCurrentAccountDescription', { providerName })
-                        : t('auth.oauthFlow.signInThenBindDescription', { providerName })
-                    }}
-                  </p>
-                </div>
-
-                <input
-                  v-if="!hasCurrentAuthToken"
-                  v-model="existingAccountEmail"
-                  data-testid="existing-account-email"
-                  type="email"
-                  class="input w-full"
-                  :placeholder="t('auth.emailPlaceholder')"
-                  :disabled="isSubmitting"
-                />
-
-                <button
-                  data-testid="existing-account-submit"
-                  type="button"
-                  class="btn btn-secondary w-full"
-                  :disabled="isSubmitting"
-                  @click="handleExistingAccountBinding"
-                >
-                  {{ hasCurrentAuthToken ? t('auth.oauthFlow.bindCurrentAccount') : t('auth.signIn') }}
-                </button>
-              </div>
-            </div>
-          </template>
-
-          <template v-else-if="needsChooser">
+          <template v-if="needsChooser">
             <div
               class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-dark-600 dark:bg-dark-800/60"
             >
@@ -326,7 +259,6 @@ import PendingOAuthCreateAccountForm, {
 import { apiClient } from '@/api/client'
 import { useAuthStore, useAppStore } from '@/stores'
 import {
-  completeWeChatOAuthRegistration,
   exchangePendingOAuthCompletion,
   getAuthToken,
   hasExplicitWeChatOAuthCapabilities,
@@ -350,11 +282,8 @@ const appStore = useAppStore()
 
 const isProcessing = ref(true)
 const errorMessage = ref('')
-const needsInvitation = ref(false)
 const needsChooser = ref(false)
-const invitationCode = ref('')
 const isSubmitting = ref(false)
-const invitationError = ref('')
 const redirectTo = ref('/dashboard')
 const adoptionRequired = ref(false)
 const suggestedDisplayName = ref('')
@@ -367,7 +296,6 @@ const pendingAccountAction = ref<'none' | 'choice' | 'create_account' | 'bind_lo
 const pendingAccountEmail = ref('')
 const bindLoginEmail = ref('')
 const bindLoginPassword = ref('')
-const legacyPendingOAuthToken = ref('')
 const accountActionError = ref('')
 const needsTotpChallenge = ref(false)
 const totpTempToken = ref('')
@@ -383,12 +311,6 @@ const showBackToChooser = computed(
 const needsCreateAccount = computed(() => pendingAccountAction.value === 'create_account')
 const needsBindLogin = computed(() => pendingAccountAction.value === 'bind_login')
 const hasCurrentAuthToken = computed(() => Boolean(getAuthToken()))
-
-watch(invitationError, value => {
-  if (value) {
-    appStore.showError(value)
-  }
-})
 
 watch(accountActionError, value => {
   if (value) {
@@ -624,28 +546,6 @@ async function handleBindCurrentAccount() {
   }
 }
 
-async function handleExistingAccountBinding() {
-  if (getAuthToken()) {
-    await handleBindCurrentAccount()
-    return
-  }
-
-  const resumePath = buildExistingAccountResumePath()
-  if (!resumePath) {
-    errorMessage.value = resolveWeChatOAuthUnavailableMessage()
-    return
-  }
-
-  const params = new URLSearchParams({
-    redirect: resumePath,
-  })
-  const email = existingAccountEmail.value.trim()
-  if (email) {
-    params.set('email', email)
-  }
-  await router.replace(`/login?${params.toString()}`)
-}
-
 function applyAdoptionSuggestionState(completion: PendingOAuthExchangeResponse) {
   adoptionRequired.value = completion.adoption_required === true
   suggestedDisplayName.value = completion.suggested_display_name || ''
@@ -754,7 +654,6 @@ function applyTotpChallenge(completion: PendingWeChatCompletion): boolean {
 
   pendingAccountAction.value = 'none'
   needsChooser.value = false
-  needsInvitation.value = false
   needsAdoptionConfirmation.value = false
   needsTotpChallenge.value = true
   totpTempToken.value = completion.temp_token
@@ -832,15 +731,6 @@ async function finalizePendingAccountResponse(completion: PendingWeChatCompletio
   applyAdoptionSuggestionState(completion)
   const redirect = sanitizeRedirectPath(completion.redirect || redirectTo.value)
 
-  if (completion.error === 'invitation_required') {
-    pendingAccountAction.value = 'none'
-    needsInvitation.value = true
-    needsAdoptionConfirmation.value = false
-    isProcessing.value = false
-    persistPendingAuthSession(redirect)
-    return
-  }
-
   if (applyTotpChallenge(completion)) {
     persistPendingAuthSession(redirect)
     return
@@ -848,7 +738,6 @@ async function finalizePendingAccountResponse(completion: PendingWeChatCompletio
 
   applyPendingAccountAction(completion)
   if (pendingAccountAction.value !== 'none') {
-    needsInvitation.value = false
     needsAdoptionConfirmation.value = false
     isProcessing.value = false
     persistPendingAuthSession(redirect)
@@ -856,7 +745,6 @@ async function finalizePendingAccountResponse(completion: PendingWeChatCompletio
   }
 
   if (completion.auth_result === 'pending_session') {
-    needsInvitation.value = false
     needsAdoptionConfirmation.value = false
     isProcessing.value = false
     persistPendingAuthSession(redirect)
@@ -864,32 +752,6 @@ async function finalizePendingAccountResponse(completion: PendingWeChatCompletio
   }
 
   await finalizeCompletion(completion, redirect)
-}
-
-async function handleSubmitInvitation() {
-  invitationError.value = ''
-  if (!invitationCode.value.trim()) return
-
-  isSubmitting.value = true
-  try {
-    const decision = currentAdoptionDecision()
-    const completion: PendingWeChatCompletion = legacyPendingOAuthToken.value
-      ? (
-          await apiClient.post<PendingWeChatCompletion>('/auth/oauth/wechat/complete-registration', {
-            pending_oauth_token: legacyPendingOAuthToken.value,
-            invitation_code: invitationCode.value.trim(),
-            ...serializeAdoptionDecision(decision)
-          })
-        ).data
-      : await completeWeChatOAuthRegistration(invitationCode.value.trim(), decision)
-    await finalizePendingAccountResponse(completion)
-  } catch (e: unknown) {
-    const err = e as { message?: string; response?: { data?: { message?: string } } }
-    invitationError.value =
-      err.response?.data?.message || err.message || t('auth.oidc.completeRegistrationFailed')
-  } finally {
-    isSubmitting.value = false
-  }
 }
 
 async function handleContinueLogin() {
@@ -915,7 +777,6 @@ async function handleCreateAccount(payload: PendingOAuthCreateAccountPayload) {
       email: payload.email,
       password: payload.password,
       verify_code: payload.verifyCode || undefined,
-      invitation_code: payload.invitationCode || undefined,
       ...serializeAdoptionDecision(currentAdoptionDecision())
     })
     await finalizePendingAccountResponse(data)
@@ -1013,7 +874,6 @@ onMounted(async () => {
 
   const params = parseFragmentParams()
   const legacyLogin = readLegacyFragmentLogin(params)
-  const legacyPendingToken = params.get('pending_oauth_token')?.trim() || ''
   const error = params.get('error')
   const errorDesc = params.get('error_description') || params.get('error_message') || ''
   const redirect = sanitizeRedirectPath(
@@ -1029,14 +889,6 @@ onMounted(async () => {
       return
     }
 
-    if (error === 'invitation_required' && legacyPendingToken) {
-      legacyPendingOAuthToken.value = legacyPendingToken
-      redirectTo.value = redirect
-      needsInvitation.value = true
-      isProcessing.value = false
-      return
-    }
-
     if (error) {
       errorMessage.value = errorDesc || error
       isProcessing.value = false
@@ -1049,13 +901,6 @@ onMounted(async () => {
     )
     applyAdoptionSuggestionState(completion)
     redirectTo.value = completionRedirect
-
-    if (completion.error === 'invitation_required') {
-      needsInvitation.value = true
-      isProcessing.value = false
-      persistPendingAuthSession(completionRedirect)
-      return
-    }
 
     if (applyTotpChallenge(completion)) {
       persistPendingAuthSession(completionRedirect)

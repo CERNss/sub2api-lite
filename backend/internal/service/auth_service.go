@@ -24,25 +24,22 @@ import (
 )
 
 var (
-	ErrInvalidCredentials      = infraerrors.Unauthorized("INVALID_CREDENTIALS", "invalid email or password")
-	ErrUserNotActive           = infraerrors.Forbidden("USER_NOT_ACTIVE", "user is not active")
-	ErrEmailExists             = infraerrors.Conflict("EMAIL_EXISTS", "email already exists")
-	ErrEmailReserved           = infraerrors.BadRequest("EMAIL_RESERVED", "email is reserved")
-	ErrInvalidToken            = infraerrors.Unauthorized("INVALID_TOKEN", "invalid token")
-	ErrTokenExpired            = infraerrors.Unauthorized("TOKEN_EXPIRED", "token has expired")
-	ErrAccessTokenExpired      = infraerrors.Unauthorized("ACCESS_TOKEN_EXPIRED", "access token has expired")
-	ErrTokenTooLarge           = infraerrors.BadRequest("TOKEN_TOO_LARGE", "token too large")
-	ErrTokenRevoked            = infraerrors.Unauthorized("TOKEN_REVOKED", "token has been revoked")
-	ErrRefreshTokenInvalid     = infraerrors.Unauthorized("REFRESH_TOKEN_INVALID", "invalid refresh token")
-	ErrRefreshTokenExpired     = infraerrors.Unauthorized("REFRESH_TOKEN_EXPIRED", "refresh token has expired")
-	ErrRefreshTokenReused      = infraerrors.Unauthorized("REFRESH_TOKEN_REUSED", "refresh token has been reused")
-	ErrEmailVerifyRequired     = infraerrors.BadRequest("EMAIL_VERIFY_REQUIRED", "email verification is required")
-	ErrEmailSuffixNotAllowed   = infraerrors.BadRequest("EMAIL_SUFFIX_NOT_ALLOWED", "email suffix is not allowed")
-	ErrRegDisabled             = infraerrors.Forbidden("REGISTRATION_DISABLED", "registration is currently disabled")
-	ErrServiceUnavailable      = infraerrors.ServiceUnavailable("SERVICE_UNAVAILABLE", "service temporarily unavailable")
-	ErrInvitationCodeRequired  = infraerrors.BadRequest("INVITATION_CODE_REQUIRED", "invitation code is required")
-	ErrInvitationCodeInvalid   = infraerrors.BadRequest("INVITATION_CODE_INVALID", "invalid or used invitation code")
-	ErrOAuthInvitationRequired = infraerrors.Forbidden("OAUTH_INVITATION_REQUIRED", "invitation code required to complete oauth registration")
+	ErrInvalidCredentials    = infraerrors.Unauthorized("INVALID_CREDENTIALS", "invalid email or password")
+	ErrUserNotActive         = infraerrors.Forbidden("USER_NOT_ACTIVE", "user is not active")
+	ErrEmailExists           = infraerrors.Conflict("EMAIL_EXISTS", "email already exists")
+	ErrEmailReserved         = infraerrors.BadRequest("EMAIL_RESERVED", "email is reserved")
+	ErrInvalidToken          = infraerrors.Unauthorized("INVALID_TOKEN", "invalid token")
+	ErrTokenExpired          = infraerrors.Unauthorized("TOKEN_EXPIRED", "token has expired")
+	ErrAccessTokenExpired    = infraerrors.Unauthorized("ACCESS_TOKEN_EXPIRED", "access token has expired")
+	ErrTokenTooLarge         = infraerrors.BadRequest("TOKEN_TOO_LARGE", "token too large")
+	ErrTokenRevoked          = infraerrors.Unauthorized("TOKEN_REVOKED", "token has been revoked")
+	ErrRefreshTokenInvalid   = infraerrors.Unauthorized("REFRESH_TOKEN_INVALID", "invalid refresh token")
+	ErrRefreshTokenExpired   = infraerrors.Unauthorized("REFRESH_TOKEN_EXPIRED", "refresh token has expired")
+	ErrRefreshTokenReused    = infraerrors.Unauthorized("REFRESH_TOKEN_REUSED", "refresh token has been reused")
+	ErrEmailVerifyRequired   = infraerrors.BadRequest("EMAIL_VERIFY_REQUIRED", "email verification is required")
+	ErrEmailSuffixNotAllowed = infraerrors.BadRequest("EMAIL_SUFFIX_NOT_ALLOWED", "email suffix is not allowed")
+	ErrRegDisabled           = infraerrors.Forbidden("REGISTRATION_DISABLED", "registration is currently disabled")
+	ErrServiceUnavailable    = infraerrors.ServiceUnavailable("SERVICE_UNAVAILABLE", "service temporarily unavailable")
 )
 
 // maxTokenLength 限制 token 大小，避免超长 header 触发解析时的异常内存分配。
@@ -124,11 +121,11 @@ func (s *AuthService) EntClient() *dbent.Client {
 
 // Register 用户注册，返回token和用户
 func (s *AuthService) Register(ctx context.Context, email, password string) (string, *User, error) {
-	return s.RegisterWithVerification(ctx, email, password, "", "", "", "")
+	return s.RegisterWithVerification(ctx, email, password, "")
 }
 
 // RegisterWithVerification 用户注册（支持邮件验证、优惠码、邀请码和邀请返利码），返回token和用户。
-func (s *AuthService) RegisterWithVerification(ctx context.Context, email, password, verifyCode, promoCode, invitationCode, affiliateCode string) (string, *User, error) {
+func (s *AuthService) RegisterWithVerification(ctx context.Context, email, password, verifyCode string) (string, *User, error) {
 	// 检查是否开放注册（默认关闭：settingService 未配置时不允许注册）
 	if s.settingService == nil || !s.settingService.IsRegistrationEnabled(ctx) {
 		return "", nil, ErrRegDisabled
@@ -140,26 +137,6 @@ func (s *AuthService) RegisterWithVerification(ctx context.Context, email, passw
 	}
 	if err := s.validateRegistrationEmailPolicy(ctx, email); err != nil {
 		return "", nil, err
-	}
-
-	// 检查是否需要邀请码
-	var invitationRedeemCode *RedeemCode
-	if s.settingService != nil && s.settingService.IsInvitationCodeEnabled(ctx) {
-		if invitationCode == "" {
-			return "", nil, ErrInvitationCodeRequired
-		}
-		// 验证邀请码
-		redeemCode, err := s.redeemRepo.GetByCode(ctx, invitationCode)
-		if err != nil {
-			logger.LegacyPrintf("service.auth", "[Auth] Invalid invitation code: %s, error: %v", invitationCode, err)
-			return "", nil, ErrInvitationCodeInvalid
-		}
-		// 检查类型和状态
-		if redeemCode.Type != RedeemTypeInvitation || !redeemCode.CanUse() {
-			logger.LegacyPrintf("service.auth", "[Auth] Invitation code invalid: type=%s, status=%s", redeemCode.Type, redeemCode.Status)
-			return "", nil, ErrInvitationCodeInvalid
-		}
-		invitationRedeemCode = redeemCode
 	}
 
 	// 检查是否需要邮件验证
@@ -226,14 +203,6 @@ func (s *AuthService) RegisterWithVerification(ctx context.Context, email, passw
 	s.assignSubscriptions(ctx, user.ID, grantPlan.Subscriptions, "auto assigned by signup defaults")
 	// snapshot user × platform quota（fail-open）
 	_ = s.snapshotPlatformQuotaDefaults(ctx, user.ID, &grantPlan)
-
-	// 标记邀请码为已使用（如果使用了邀请码）
-	if invitationRedeemCode != nil {
-		if err := s.redeemRepo.Use(ctx, invitationRedeemCode.ID, user.ID); err != nil {
-			// 邀请码标记失败不影响注册，只记录日志
-			logger.LegacyPrintf("service.auth", "[Auth] Failed to mark invitation code as used for user %d: %v", user.ID, err)
-		}
-	}
 
 	// 生成token
 	token, err := s.GenerateToken(user)
@@ -554,21 +523,9 @@ func (s *AuthService) canBypassRegistrationDisabledForOAuth(ctx context.Context,
 
 // LoginOrRegisterOAuthWithTokenPair 用于第三方 OAuth/SSO 登录，返回完整的 TokenPair。
 // 与 LoginOrRegisterOAuth 功能相同，但返回 TokenPair 而非单个 token。
-// invitationCode 仅在邀请码注册模式下新用户注册时使用；已有账号登录时忽略。
 // affiliateCode 用于邀请返利绑定，仅在新用户注册时使用。
 // signupSource 标识来源渠道（"dingtalk"/"linuxdo"/"wechat"/"oidc" 等），仅用于豁免检查。
-func (s *AuthService) LoginOrRegisterOAuthWithTokenPair(ctx context.Context, email, username, invitationCode, affiliateCode, signupSource string) (*TokenPair, *User, error) {
-	return s.loginOrRegisterOAuthWithTokenPair(ctx, email, username, invitationCode, affiliateCode, "", signupSource)
-}
-
-// LoginOrRegisterOAuthWithTokenPairAndPromoCode behaves like
-// LoginOrRegisterOAuthWithTokenPair and applies promoCode only when a new user
-// is created.
-func (s *AuthService) LoginOrRegisterOAuthWithTokenPairAndPromoCode(ctx context.Context, email, username, invitationCode, affiliateCode, promoCode, signupSource string) (*TokenPair, *User, error) {
-	return s.loginOrRegisterOAuthWithTokenPair(ctx, email, username, invitationCode, affiliateCode, promoCode, signupSource)
-}
-
-func (s *AuthService) loginOrRegisterOAuthWithTokenPair(ctx context.Context, email, username, invitationCode, affiliateCode, promoCode, signupSource string) (*TokenPair, *User, error) {
+func (s *AuthService) LoginOrRegisterOAuthWithTokenPair(ctx context.Context, email, username, signupSource string) (*TokenPair, *User, error) {
 	// 检查 refreshTokenCache 是否可用
 	if s.refreshTokenCache == nil {
 		return nil, nil, errors.New("refresh token cache not configured")
@@ -593,22 +550,6 @@ func (s *AuthService) loginOrRegisterOAuthWithTokenPair(ctx context.Context, ema
 			// OAuth 首次登录视为注册
 			if s.settingService == nil || (!s.settingService.IsRegistrationEnabled(ctx) && !s.canBypassRegistrationDisabledForOAuth(ctx, signupSource)) {
 				return nil, nil, ErrRegDisabled
-			}
-
-			// 检查是否需要邀请码
-			var invitationRedeemCode *RedeemCode
-			if s.settingService != nil && s.settingService.IsInvitationCodeEnabled(ctx) {
-				if invitationCode == "" {
-					return nil, nil, ErrOAuthInvitationRequired
-				}
-				redeemCode, err := s.redeemRepo.GetByCode(ctx, invitationCode)
-				if err != nil {
-					return nil, nil, ErrInvitationCodeInvalid
-				}
-				if redeemCode.Type != RedeemTypeInvitation || !redeemCode.CanUse() {
-					return nil, nil, ErrInvitationCodeInvalid
-				}
-				invitationRedeemCode = redeemCode
 			}
 
 			randomPassword, err := randomHexString(32)
@@ -643,65 +584,23 @@ func (s *AuthService) loginOrRegisterOAuthWithTokenPair(ctx context.Context, ema
 				Status:       StatusActive,
 				SignupSource: signupSource,
 			}
-
-			if s.entClient != nil && invitationRedeemCode != nil {
-				tx, err := s.entClient.Tx(ctx)
-				if err != nil {
-					logger.LegacyPrintf("service.auth", "[Auth] Failed to begin transaction for oauth registration: %v", err)
+			if err := s.userRepo.Create(ctx, newUser); err != nil {
+				if errors.Is(err, ErrEmailExists) {
+					user, err = s.userRepo.GetByEmail(ctx, email)
+					if err != nil {
+						logger.LegacyPrintf("service.auth", "[Auth] Database error getting user after conflict: %v", err)
+						return nil, nil, ErrServiceUnavailable
+					}
+				} else {
+					logger.LegacyPrintf("service.auth", "[Auth] Database error creating oauth user: %v", err)
 					return nil, nil, ErrServiceUnavailable
 				}
-				defer func() { _ = tx.Rollback() }()
-				txCtx := dbent.NewTxContext(ctx, tx)
-
-				if err := s.userRepo.Create(txCtx, newUser); err != nil {
-					if errors.Is(err, ErrEmailExists) {
-						user, err = s.userRepo.GetByEmail(ctx, email)
-						if err != nil {
-							logger.LegacyPrintf("service.auth", "[Auth] Database error getting user after conflict: %v", err)
-							return nil, nil, ErrServiceUnavailable
-						}
-					} else {
-						logger.LegacyPrintf("service.auth", "[Auth] Database error creating oauth user: %v", err)
-						return nil, nil, ErrServiceUnavailable
-					}
-				} else {
-					if err := s.redeemRepo.Use(txCtx, invitationRedeemCode.ID, newUser.ID); err != nil {
-						return nil, nil, ErrInvitationCodeInvalid
-					}
-					if err := tx.Commit(); err != nil {
-						logger.LegacyPrintf("service.auth", "[Auth] Failed to commit oauth registration transaction: %v", err)
-						return nil, nil, ErrServiceUnavailable
-					}
-					user = newUser
-					s.postAuthUserBootstrap(ctx, user, signupSource, false)
-					s.assignSubscriptions(ctx, user.ID, grantPlan.Subscriptions, "auto assigned by signup defaults")
-					// snapshot user × platform quota（fail-open）
-					_ = s.snapshotPlatformQuotaDefaults(ctx, user.ID, &grantPlan)
-				}
 			} else {
-				if err := s.userRepo.Create(ctx, newUser); err != nil {
-					if errors.Is(err, ErrEmailExists) {
-						user, err = s.userRepo.GetByEmail(ctx, email)
-						if err != nil {
-							logger.LegacyPrintf("service.auth", "[Auth] Database error getting user after conflict: %v", err)
-							return nil, nil, ErrServiceUnavailable
-						}
-					} else {
-						logger.LegacyPrintf("service.auth", "[Auth] Database error creating oauth user: %v", err)
-						return nil, nil, ErrServiceUnavailable
-					}
-				} else {
-					user = newUser
-					s.postAuthUserBootstrap(ctx, user, signupSource, false)
-					s.assignSubscriptions(ctx, user.ID, grantPlan.Subscriptions, "auto assigned by signup defaults")
-					// snapshot user × platform quota（fail-open）
-					_ = s.snapshotPlatformQuotaDefaults(ctx, user.ID, &grantPlan)
-					if invitationRedeemCode != nil {
-						if err := s.redeemRepo.Use(ctx, invitationRedeemCode.ID, user.ID); err != nil {
-							return nil, nil, ErrInvitationCodeInvalid
-						}
-					}
-				}
+				user = newUser
+				s.postAuthUserBootstrap(ctx, user, signupSource, false)
+				s.assignSubscriptions(ctx, user.ID, grantPlan.Subscriptions, "auto assigned by signup defaults")
+				// snapshot user × platform quota（fail-open）
+				_ = s.snapshotPlatformQuotaDefaults(ctx, user.ID, &grantPlan)
 			}
 		} else {
 			logger.LegacyPrintf("service.auth", "[Auth] Database error during oauth login: %v", err)
@@ -724,12 +623,6 @@ func (s *AuthService) loginOrRegisterOAuthWithTokenPair(ctx context.Context, ema
 		return nil, nil, fmt.Errorf("generate token pair: %w", err)
 	}
 	return tokenPair, user, nil
-}
-
-func (s *AuthService) ApplyOAuthSignupPromoCode(ctx context.Context, userID int64, promoCode string) {
-	if userID <= 0 {
-		return
-	}
 }
 
 func (s *AuthService) assignSubscriptions(ctx context.Context, userID int64, items []DefaultSubscriptionSetting, notes string) {

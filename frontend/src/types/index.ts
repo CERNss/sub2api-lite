@@ -121,7 +121,6 @@ export interface RegisterRequest {
   password: string
   verify_code?: string
   turnstile_token?: string
-  invitation_code?: string
 }
 
 export interface AffiliateInvitee {
@@ -173,7 +172,6 @@ export interface PublicSettings {
   force_email_on_third_party_signup: boolean
   registration_email_suffix_whitelist: string[]
   password_reset_enabled: boolean
-  invitation_code_enabled: boolean
   login_agreement_enabled?: boolean
   login_agreement_mode?: 'modal' | 'checkbox' | string
   login_agreement_updated_at?: string
@@ -1206,7 +1204,7 @@ export interface CodexSessionImportResult {
 
 // ==================== Usage & Redeem Types ====================
 
-export type RedeemCodeType = 'balance' | 'concurrency' | 'subscription' | 'invitation'
+export type RedeemCodeType = 'balance' | 'concurrency' | 'subscription'
 export type UsageRequestType = 'unknown' | 'sync' | 'stream' | 'ws_v2' | 'cyber'
 export type ImageSizeSource = 'output' | 'input' | 'default' | 'legacy'
 export type ImageSizeBreakdown = Record<string, number>

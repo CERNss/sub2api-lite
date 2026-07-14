@@ -488,13 +488,6 @@ export default {
     promoCodeAlreadyUsed: 'You have already used this promo code',
     promoCodeValidating: 'Promo code is being validated, please wait',
     promoCodeInvalidCannotRegister: 'Invalid promo code. Please check and try again or clear the promo code field',
-    invitationCodeLabel: 'Invitation Code',
-    invitationCodePlaceholder: 'Enter invitation code',
-    invitationCodeRequired: 'Invitation code is required',
-    invitationCodeValid: 'Invitation code is valid',
-    invitationCodeInvalid: 'Invalid or used invitation code',
-    invitationCodeValidating: 'Validating invitation code...',
-    invitationCodeInvalidCannotRegister: 'Invalid invitation code. Please check and try again',
     oauthOrContinue: 'or continue with others',
     linuxdo: {
       signIn: 'Continue with Linux.do',
@@ -504,11 +497,10 @@ export default {
       callbackHint: 'If you are not redirected automatically, go back to the login page and try again.',
       callbackMissingToken: 'Missing login token, please try again.',
       backToLogin: 'Back to Login',
-      invitationRequired: 'This Linux.do account is not yet registered. The site requires an invitation code — please enter one to complete registration.',
       invalidPendingToken: 'The registration token has expired. Please sign in with Linux.do again.',
       completeRegistration: 'Complete Registration',
       completing: 'Completing registration…',
-      completeRegistrationFailed: 'Registration failed. Please check your invitation code and try again.'
+      completeRegistrationFailed: 'Registration failed. Please try again.'
     },
     dingtalk: {
       signIn: 'Continue with DingTalk',
@@ -517,11 +509,10 @@ export default {
       callbackHint: 'If you are not redirected automatically, go back to the login page and try again.',
       callbackMissingToken: 'Missing login token, please try again.',
       backToLogin: 'Back to Login',
-      invitationRequired: 'This DingTalk account is not yet registered. The site requires an invitation code — please enter one to complete registration.',
       invalidPendingToken: 'The registration token has expired. Please sign in with DingTalk again.',
       completeRegistration: 'Complete Registration',
       completing: 'Completing registration…',
-      completeRegistrationFailed: 'Registration failed. Please check your invitation code and try again.',
+      completeRegistrationFailed: 'Registration failed. Please try again.',
       createAccountTitle: 'Create DingTalk Account',
       registrationDisabledRedirectToBind: 'New account registration is currently disabled. Please bind to your existing account with its email and password.',
       error: {
@@ -548,12 +539,10 @@ export default {
       callbackHint: 'If you are not redirected automatically, go back to the login page and try again.',
       callbackMissingToken: 'Missing login token, please try again.',
       backToLogin: 'Back to Login',
-      invitationRequired:
-        'This {providerName} account is not yet registered. The site requires an invitation code — please enter one to complete registration.',
       invalidPendingToken: 'The registration token has expired. Please sign in again.',
       completeRegistration: 'Complete Registration',
       completing: 'Completing registration…',
-      completeRegistrationFailed: 'Registration failed. Please check your invitation code and try again.'
+      completeRegistrationFailed: 'Registration failed. Please try again.'
     },
     oauthFlow: {
       profileDetailsTitle: 'Use {providerName} profile details',
@@ -5222,8 +5211,6 @@ export default {
         emailSuffixWhitelistInputHint: 'Leave empty for no restriction. Use *.edu.cn to match edu.cn and its subdomains.',
         promoCode: 'Promo Code',
         promoCodeHint: 'Allow users to use promo codes during registration',
-        invitationCode: 'Invitation Code Registration',
-        invitationCodeHint: 'When enabled, users must enter a valid invitation code to register',
         passwordReset: 'Password Reset',
         passwordResetHint: 'Allow users to reset their password via email',
         frontendUrl: 'Frontend URL',

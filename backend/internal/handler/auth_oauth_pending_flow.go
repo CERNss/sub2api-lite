@@ -69,7 +69,6 @@ type createPendingOAuthAccountRequest struct {
 	Email            string `json:"email" binding:"required,email"`
 	VerifyCode       string `json:"verify_code,omitempty"`
 	Password         string `json:"password" binding:"required,min=6"`
-	InvitationCode   string `json:"invitation_code,omitempty"`
 	AffCode          string `json:"aff_code,omitempty"`
 	AdoptDisplayName *bool  `json:"adopt_display_name,omitempty"`
 	AdoptAvatar      *bool  `json:"adopt_avatar,omitempty"`
@@ -192,24 +191,6 @@ func clearOAuthPromoCodeCookie(c *gin.Context, secure bool) {
 	})
 }
 
-func readOAuthPromoCode(c *gin.Context) string {
-	if c == nil {
-		return ""
-	}
-	promoCode, err := readCookieDecoded(c, oauthPromoCodeCookieName)
-	if err != nil {
-		return ""
-	}
-	return strings.TrimSpace(promoCode)
-}
-
-func pendingOAuthPromoCode(session *dbent.PendingAuthSession) string {
-	if session == nil {
-		return ""
-	}
-	return pendingSessionStringValue(session.LocalFlowState, oauthPromoCodeStateKey)
-}
-
 func redirectToFrontendCallback(c *gin.Context, frontendCallback string) {
 	u, err := url.Parse(frontendCallback)
 	if err != nil {
@@ -234,9 +215,6 @@ func (h *AuthHandler) createOAuthPendingSession(c *gin.Context, payload oauthPen
 
 	localFlowState := map[string]any{
 		oauthCompletionResponseKey: payload.CompletionResponse,
-	}
-	if promoCode := readOAuthPromoCode(c); promoCode != "" {
-		localFlowState[oauthPromoCodeStateKey] = promoCode
 	}
 
 	session, err := svc.CreatePendingSession(c.Request.Context(), service.CreatePendingAuthSessionInput{
@@ -383,10 +361,6 @@ func (h *AuthHandler) pendingOAuthLocalEmailVerificationRequired(ctx context.Con
 	return h.pendingOIDCLocalEmailVerificationRequired(ctx, session.UpstreamIdentityClaims, email)
 }
 
-func pendingSessionWantsInvitation(payload map[string]any) bool {
-	return strings.EqualFold(strings.TrimSpace(pendingSessionStringValue(payload, "error")), "invitation_required")
-}
-
 // pendingSessionRequiresEmailCompletion 判断 callback 写入的 completion payload 是否处于"补邮箱"状态。
 // 钉钉跨组织/staff 邮箱缺失时进入此状态：前端跳到补邮箱页，exchange 不应走 adoption apply。
 func pendingSessionRequiresEmailCompletion(payload map[string]any) bool {
@@ -411,9 +385,6 @@ func pendingOAuthCompletionCanIssueTokenPair(session *dbent.PendingAuthSession, 
 		return false
 	}
 	if session.TargetUserID == nil || *session.TargetUserID <= 0 {
-		return false
-	}
-	if pendingSessionWantsInvitation(payload) {
 		return false
 	}
 	return strings.TrimSpace(pendingSessionStringValue(payload, "step")) == ""
@@ -1841,7 +1812,6 @@ func (h *AuthHandler) createPendingOAuthAccount(c *gin.Context, provider string)
 		email,
 		req.Password,
 		strings.TrimSpace(req.VerifyCode),
-		strings.TrimSpace(req.InvitationCode),
 		strings.TrimSpace(session.ProviderType),
 		requireLocalEmailVerification,
 	)
@@ -1871,7 +1841,6 @@ func (h *AuthHandler) createPendingOAuthAccount(c *gin.Context, provider string)
 		if rollbackErr := h.authService.RollbackOAuthEmailAccountCreation(
 			c.Request.Context(),
 			user.ID,
-			strings.TrimSpace(req.InvitationCode),
 		); rollbackErr != nil {
 			response.ErrorFrom(c, infraerrors.InternalServer(
 				"PENDING_AUTH_ACCOUNT_ROLLBACK_FAILED",
@@ -1915,9 +1884,7 @@ func (h *AuthHandler) createPendingOAuthAccount(c *gin.Context, provider string)
 	if err := h.authService.FinalizeOAuthEmailAccount(
 		txCtx,
 		user,
-		strings.TrimSpace(req.InvitationCode),
 		strings.TrimSpace(session.ProviderType),
-		strings.TrimSpace(req.AffCode),
 	); err != nil {
 		_ = tx.Rollback()
 		if rollbackCreatedUser(err) {
@@ -1956,7 +1923,6 @@ func (h *AuthHandler) createPendingOAuthAccount(c *gin.Context, provider string)
 		return
 	}
 
-	h.authService.ApplyOAuthSignupPromoCode(c.Request.Context(), user.ID, pendingOAuthPromoCode(session))
 	h.authService.RecordSuccessfulLogin(c.Request.Context(), user.ID)
 	// createPendingOAuthAccount = 注册新账户，需要把钉钉昵称同步到 users.username 作为初始值
 	h.maybeSyncDingTalkAfterRegistration(c.Request.Context(), session, user.ID)
@@ -2049,18 +2015,6 @@ func (h *AuthHandler) ExchangePendingOAuthCompletion(c *gin.Context) {
 		delete(payload, "adoption_required")
 	}
 
-	if pendingSessionWantsInvitation(payload) {
-		if adoptionDecision.hasDecision() {
-			decision, err := h.upsertPendingOAuthAdoptionDecision(c, session.ID, adoptionDecision)
-			if err != nil {
-				response.ErrorFrom(c, err)
-				return
-			}
-			_ = decision
-		}
-		response.Success(c, payload)
-		return
-	}
 	if pendingSessionRequiresEmailCompletion(payload) {
 		response.Success(c, payload)
 		return

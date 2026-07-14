@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEmailOAuthCallbackRequiresPendingRegistrationWhenInvitationEnabled(t *testing.T) {
+func TestEmailOAuthCallbackRequiresPendingRegistrationForNewEmail(t *testing.T) {
 	handler, client := newOAuthPendingFlowTestHandler(t, true)
 	ctx := context.Background()
 
@@ -70,8 +70,7 @@ func TestEmailOAuthCallbackRequiresPendingRegistrationWhenInvitationEnabled(t *t
 	completion, ok := readCompletionResponse(session.LocalFlowState)
 	require.True(t, ok)
 	require.Equal(t, oauthPendingChoiceStep, completion["step"])
-	require.Equal(t, "invitation_required", completion["error"])
-	require.Equal(t, true, completion["invitation_required"])
+	require.Equal(t, "registration_completion_required", completion["error"])
 	require.Equal(t, "fresh@example.com", completion["email"])
 	require.Equal(t, "fresh@example.com", completion["resolved_email"])
 	require.Equal(t, true, completion["create_account_allowed"])
@@ -80,7 +79,7 @@ func TestEmailOAuthCallbackRequiresPendingRegistrationWhenInvitationEnabled(t *t
 	require.NotEmpty(t, findSetCookieValue(recorder.Result().Cookies(), oauthPendingBrowserCookieName))
 }
 
-func TestEmailOAuthCallbackExistingEmailLogsInWhenInvitationEnabled(t *testing.T) {
+func TestEmailOAuthCallbackExistingEmailLogsIn(t *testing.T) {
 	handler, client := newOAuthPendingFlowTestHandler(t, true)
 	ctx := context.Background()
 

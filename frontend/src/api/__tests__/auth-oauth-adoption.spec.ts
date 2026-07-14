@@ -44,46 +44,15 @@ describe('oauth adoption auth api', () => {
     })
   })
 
-  it('posts linuxdo invitation completion with adoption decisions', async () => {
-    const { completeLinuxDoOAuthRegistration } = await import('@/api/auth')
-
-    await completeLinuxDoOAuthRegistration('invite-code', {
-      adoptDisplayName: true,
-      adoptAvatar: false
-    })
-
-    expect(post).toHaveBeenCalledWith('/auth/oauth/linuxdo/complete-registration', {
-      invitation_code: 'invite-code',
-      adopt_display_name: true,
-      adopt_avatar: false
-    })
-  })
-
   it('posts linuxdo create-account completion with adoption decisions', async () => {
     const { createPendingLinuxDoOAuthAccount } = await import('@/api/auth')
 
-    await createPendingLinuxDoOAuthAccount('invite-code', {
+    await createPendingLinuxDoOAuthAccount({
       adoptDisplayName: false,
       adoptAvatar: true
     })
 
     expect(post).toHaveBeenCalledWith('/auth/oauth/linuxdo/complete-registration', {
-      invitation_code: 'invite-code',
-      adopt_display_name: false,
-      adopt_avatar: true
-    })
-  })
-
-  it('posts oidc invitation completion with adoption decisions', async () => {
-    const { completeOIDCOAuthRegistration } = await import('@/api/auth')
-
-    await completeOIDCOAuthRegistration('invite-code', {
-      adoptDisplayName: false,
-      adoptAvatar: true
-    })
-
-    expect(post).toHaveBeenCalledWith('/auth/oauth/oidc/complete-registration', {
-      invitation_code: 'invite-code',
       adopt_display_name: false,
       adopt_avatar: true
     })
@@ -92,43 +61,26 @@ describe('oauth adoption auth api', () => {
   it('posts oidc create-account completion with adoption decisions', async () => {
     const { createPendingOIDCOAuthAccount } = await import('@/api/auth')
 
-    await createPendingOIDCOAuthAccount('invite-code', {
+    await createPendingOIDCOAuthAccount({
       adoptDisplayName: true,
       adoptAvatar: false
     })
 
     expect(post).toHaveBeenCalledWith('/auth/oauth/oidc/complete-registration', {
-      invitation_code: 'invite-code',
       adopt_display_name: true,
       adopt_avatar: false
-    })
-  })
-
-  it('posts wechat invitation completion with adoption decisions', async () => {
-    const { completeWeChatOAuthRegistration } = await import('@/api/auth')
-
-    await completeWeChatOAuthRegistration('invite-code', {
-      adoptDisplayName: true,
-      adoptAvatar: true
-    })
-
-    expect(post).toHaveBeenCalledWith('/auth/oauth/wechat/complete-registration', {
-      invitation_code: 'invite-code',
-      adopt_display_name: true,
-      adopt_avatar: true
     })
   })
 
   it('posts wechat create-account completion with adoption decisions', async () => {
     const { createPendingWeChatOAuthAccount } = await import('@/api/auth')
 
-    await createPendingWeChatOAuthAccount('invite-code', {
+    await createPendingWeChatOAuthAccount({
       adoptDisplayName: false,
       adoptAvatar: false
     })
 
     expect(post).toHaveBeenCalledWith('/auth/oauth/wechat/complete-registration', {
-      invitation_code: 'invite-code',
       adopt_display_name: false,
       adopt_avatar: false
     })
@@ -141,7 +93,7 @@ describe('oauth adoption auth api', () => {
     expect(getOAuthCompletionKind({ redirect: '/profile' })).toBe('bind')
   })
 
-  it('provides bind-login utility helpers for invitation and suggested profile states', async () => {
+  it('provides bind-login utility helpers for suggested profile states', async () => {
     const {
       getPendingOAuthBindLoginKind,
       hasPendingOAuthSuggestedProfile,
@@ -150,11 +102,6 @@ describe('oauth adoption auth api', () => {
 
     expect(getPendingOAuthBindLoginKind({ access_token: 'access-token' })).toBe('login')
     expect(getPendingOAuthBindLoginKind({ redirect: '/profile' })).toBe('bind')
-    expect(
-      isPendingOAuthCreateAccountRequired({
-        error: 'invitation_required'
-      })
-    ).toBe(true)
     expect(
       isPendingOAuthCreateAccountRequired({
         error: 'other'

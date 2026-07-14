@@ -925,71 +925,6 @@ func TestNormalizePendingOAuthCompletionResponseScrubsLegacyTokenPayload(t *test
 	require.Equal(t, "/dashboard", payload["redirect"])
 }
 
-func TestExchangePendingOAuthCompletionInvitationRequiredFalseFalsePersistsDecisionWithoutBinding(t *testing.T) {
-	handler, client := newOAuthPendingFlowTestHandler(t, true)
-	ctx := context.Background()
-
-	session, err := client.PendingAuthSession.Create().
-		SetSessionToken("invitation-required-session-token").
-		SetIntent("login").
-		SetProviderType("linuxdo").
-		SetProviderKey("linuxdo").
-		SetProviderSubject("invitation-123").
-		SetBrowserSessionKey("invitation-required-browser-session-key").
-		SetUpstreamIdentityClaims(map[string]any{
-			"suggested_display_name": "Invite Example",
-			"suggested_avatar_url":   "https://cdn.example/invite.png",
-		}).
-		SetLocalFlowState(map[string]any{
-			oauthCompletionResponseKey: map[string]any{
-				"error": "invitation_required",
-			},
-		}).
-		SetExpiresAt(time.Now().UTC().Add(10 * time.Minute)).
-		Save(ctx)
-	require.NoError(t, err)
-
-	body := bytes.NewBufferString(`{"adopt_display_name":false,"adopt_avatar":false}`)
-	recorder := httptest.NewRecorder()
-	ginCtx, _ := gin.CreateTestContext(recorder)
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/pending/exchange", body)
-	req.Header.Set("Content-Type", "application/json")
-	req.AddCookie(&http.Cookie{Name: oauthPendingSessionCookieName, Value: encodeCookieValue(session.SessionToken)})
-	req.AddCookie(&http.Cookie{Name: oauthPendingBrowserCookieName, Value: encodeCookieValue("invitation-required-browser-session-key")})
-	ginCtx.Request = req
-
-	handler.ExchangePendingOAuthCompletion(ginCtx)
-
-	require.Equal(t, http.StatusOK, recorder.Code)
-	data := decodeJSONResponseData(t, recorder)
-	require.Equal(t, "invitation_required", data["error"])
-	require.Equal(t, true, data["adoption_required"])
-
-	identityCount, err := client.AuthIdentity.Query().
-		Where(
-			authidentity.ProviderTypeEQ("linuxdo"),
-			authidentity.ProviderKeyEQ("linuxdo"),
-			authidentity.ProviderSubjectEQ("invitation-123"),
-		).
-		Count(ctx)
-	require.NoError(t, err)
-	require.Zero(t, identityCount)
-
-	decision, err := client.IdentityAdoptionDecision.Query().
-		Where(identityadoptiondecision.PendingAuthSessionIDEQ(session.ID)).
-		Only(ctx)
-	require.NoError(t, err)
-	require.Nil(t, decision.IdentityID)
-	require.False(t, decision.AdoptDisplayName)
-	require.False(t, decision.AdoptAvatar)
-
-	storedSession, err := client.PendingAuthSession.Query().
-		Where(pendingauthsession.IDEQ(session.ID)).
-		Only(ctx)
-	require.NoError(t, err)
-	require.Nil(t, storedSession.ConsumedAt)
-}
-
 func TestCreateOIDCOAuthAccountCreatesUserBindsIdentityAndConsumesSession(t *testing.T) {
 	handler, client := newOAuthPendingFlowTestHandlerWithEmailVerification(t, false, "fresh@example.com", "246810")
 	ctx := context.Background()
@@ -1435,14 +1370,6 @@ func TestCreateOIDCOAuthAccountRollsBackCreatedUserWhenBindingFails(t *testing.T
 		Save(ctx)
 	require.NoError(t, err)
 
-	invitation, err := client.RedeemCode.Create().
-		SetCode("INVITE123").
-		SetType(service.RedeemTypeInvitation).
-		SetStatus(service.StatusUnused).
-		SetValue(0).
-		Save(ctx)
-	require.NoError(t, err)
-
 	session, err := client.PendingAuthSession.Create().
 		SetSessionToken("create-account-conflict-session-token").
 		SetIntent("login").
@@ -1458,7 +1385,7 @@ func TestCreateOIDCOAuthAccountRollsBackCreatedUserWhenBindingFails(t *testing.T
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"email":"fresh@example.com","verify_code":"246810","password":"secret-123","invitation_code":"INVITE123"}`)
+	body := bytes.NewBufferString(`{"email":"fresh@example.com","verify_code":"246810","password":"secret-123"}`)
 	recorder := httptest.NewRecorder()
 	ginCtx, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/oidc/create-account", body)
@@ -1474,12 +1401,6 @@ func TestCreateOIDCOAuthAccountRollsBackCreatedUserWhenBindingFails(t *testing.T
 	userCount, err := client.User.Query().Where(dbuser.EmailEQ("fresh@example.com")).Count(ctx)
 	require.NoError(t, err)
 	require.Zero(t, userCount)
-
-	storedInvitation, err := client.RedeemCode.Get(ctx, invitation.ID)
-	require.NoError(t, err)
-	require.Equal(t, service.StatusUnused, storedInvitation.Status)
-	require.Nil(t, storedInvitation.UsedBy)
-	require.Nil(t, storedInvitation.UsedAt)
 
 	storedSession, err := client.PendingAuthSession.Get(ctx, session.ID)
 	require.NoError(t, err)
@@ -2295,7 +2216,6 @@ CREATE TABLE IF NOT EXISTS user_affiliates (
 	}
 	settingValues := map[string]string{
 		service.SettingKeyRegistrationEnabled:              "true",
-		service.SettingKeyInvitationCodeEnabled:            boolSettingValue(options.invitationEnabled),
 		service.SettingKeyEmailVerifyEnabled:               boolSettingValue(options.emailVerifyEnabled),
 		service.SettingKeyRegistrationEmailSuffixWhitelist: "[]",
 	}

@@ -18,7 +18,6 @@ type SystemSettings struct {
 	PromoCodeEnabled                 bool
 	PasswordResetEnabled             bool
 	FrontendURL                      string
-	InvitationCodeEnabled            bool
 	TotpEnabled                      bool // TOTP 双因素认证
 	LoginAgreementEnabled            bool
 	LoginAgreementMode               string
@@ -246,7 +245,6 @@ type PublicSettings struct {
 	RegistrationEmailSuffixWhitelist []string
 	PromoCodeEnabled                 bool
 	PasswordResetEnabled             bool
-	InvitationCodeEnabled            bool
 	TotpEnabled                      bool // TOTP 双因素认证
 	LoginAgreementEnabled            bool
 	LoginAgreementMode               string

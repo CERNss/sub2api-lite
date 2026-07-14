@@ -568,69 +568,6 @@ func TestLinuxDoOAuthCallbackCreatesBindPendingSessionForCompatEmailUser(t *test
 	require.False(t, hasAccessToken)
 }
 
-func TestLinuxDoOAuthCallbackCreatesChoicePendingSessionWhenSignupRequiresInvite(t *testing.T) {
-	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case "/token":
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write([]byte(`{"access_token":"linuxdo-access","token_type":"Bearer","expires_in":3600}`))
-		case "/userinfo":
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write([]byte(`{"id":"654","username":"linuxdo_invite","name":"Need Invite","avatar_url":"https://cdn.example/invite.png"}`))
-		default:
-			http.NotFound(w, r)
-		}
-	}))
-	defer upstream.Close()
-
-	handler, client := newLinuxDoOAuthHandlerAndClient(t, true, config.LinuxDoConnectConfig{
-		Enabled:             true,
-		ClientID:            "linuxdo-client",
-		ClientSecret:        "linuxdo-secret",
-		AuthorizeURL:        upstream.URL + "/authorize",
-		TokenURL:            upstream.URL + "/token",
-		UserInfoURL:         upstream.URL + "/userinfo",
-		Scopes:              "read",
-		RedirectURL:         "https://api.example.com/api/v1/auth/oauth/linuxdo/callback",
-		FrontendRedirectURL: "/auth/linuxdo/callback",
-		TokenAuthMethod:     "client_secret_post",
-		UsePKCE:             true,
-	})
-	t.Cleanup(func() { _ = client.Close() })
-
-	recorder := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(recorder)
-	req := httptest.NewRequest(http.MethodGet, "/api/v1/auth/oauth/linuxdo/callback?code=code-456&state=state-456", nil)
-	req.AddCookie(encodedCookie(linuxDoOAuthStateCookieName, "state-456"))
-	req.AddCookie(encodedCookie(linuxDoOAuthRedirectCookie, "/dashboard"))
-	req.AddCookie(encodedCookie(linuxDoOAuthVerifierCookie, "verifier-456"))
-	req.AddCookie(encodedCookie(linuxDoOAuthIntentCookieName, oauthIntentLogin))
-	req.AddCookie(encodedCookie(oauthPendingBrowserCookieName, "browser-456"))
-	c.Request = req
-
-	handler.LinuxDoOAuthCallback(c)
-
-	require.Equal(t, http.StatusFound, recorder.Code)
-	require.Equal(t, "/auth/linuxdo/callback", recorder.Header().Get("Location"))
-
-	sessionCookie := findCookie(recorder.Result().Cookies(), oauthPendingSessionCookieName)
-	require.NotNil(t, sessionCookie)
-
-	ctx := context.Background()
-	session, err := client.PendingAuthSession.Query().
-		Where(pendingauthsession.SessionTokenEQ(decodeCookieValueForTest(t, sessionCookie.Value))).
-		Only(ctx)
-	require.NoError(t, err)
-	require.Equal(t, oauthIntentLogin, session.Intent)
-	require.Nil(t, session.TargetUserID)
-
-	completion, ok := session.LocalFlowState[oauthCompletionResponseKey].(map[string]any)
-	require.True(t, ok)
-	require.Equal(t, oauthPendingChoiceStep, completion["step"])
-	require.Equal(t, "/dashboard", completion["redirect"])
-	require.Equal(t, "third_party_signup", completion["choice_reason"])
-}
-
 func TestLinuxDoOAuthCallbackDirectlyLogsInNewUserWhenEmailVerificationDisabled(t *testing.T) {
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
@@ -813,7 +750,7 @@ func TestCompleteLinuxDoOAuthRegistrationAppliesPendingAdoptionDecision(t *testi
 	})
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1","adopt_display_name":true}`)
+	body := bytes.NewBufferString(`{"adopt_display_name":true}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/linuxdo/complete-registration", body)
@@ -896,7 +833,7 @@ func TestCompleteLinuxDoOAuthRegistrationRejectsAdoptExistingUserSession(t *test
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/linuxdo/complete-registration", body)
@@ -942,7 +879,7 @@ func TestCompleteLinuxDoOAuthRegistrationReturnsPendingSessionWhenChoiceStillReq
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/linuxdo/complete-registration", body)
@@ -990,7 +927,7 @@ func TestCompleteLinuxDoOAuthRegistrationBindsIdentityWithoutAdoptionFlags(t *te
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/linuxdo/complete-registration", body)
@@ -1068,7 +1005,7 @@ func TestCompleteLinuxDoOAuthRegistrationRejectsIdentityOwnershipConflictBeforeU
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/linuxdo/complete-registration", body)

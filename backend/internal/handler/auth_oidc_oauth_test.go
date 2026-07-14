@@ -817,7 +817,7 @@ func TestCompleteOIDCOAuthRegistrationAppliesPendingAdoptionDecision(t *testing.
 	})
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1","adopt_display_name":true}`)
+	body := bytes.NewBufferString(`{"adopt_display_name":true}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/oidc/complete-registration", body)
@@ -900,7 +900,7 @@ func TestCompleteOIDCOAuthRegistrationRejectsAdoptExistingUserSession(t *testing
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/oidc/complete-registration", body)
@@ -947,7 +947,7 @@ func TestCompleteOIDCOAuthRegistrationReturnsPendingSessionWhenChoiceStillRequir
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/oidc/complete-registration", body)
@@ -996,7 +996,7 @@ func TestCompleteOIDCOAuthRegistrationBindsIdentityWithoutAdoptionFlags(t *testi
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/oidc/complete-registration", body)
@@ -1075,7 +1075,7 @@ func TestCompleteOIDCOAuthRegistrationRejectsIdentityOwnershipConflictBeforeUser
 		Save(ctx)
 	require.NoError(t, err)
 
-	body := bytes.NewBufferString(`{"invitation_code":"invite-1"}`)
+	body := bytes.NewBufferString(`{}`)
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/oauth/oidc/complete-registration", body)

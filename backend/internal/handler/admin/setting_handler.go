@@ -111,7 +111,6 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		RegistrationEmailSuffixWhitelist:         settings.RegistrationEmailSuffixWhitelist,
 		PasswordResetEnabled:                     settings.PasswordResetEnabled,
 		FrontendURL:                              settings.FrontendURL,
-		InvitationCodeEnabled:                    settings.InvitationCodeEnabled,
 		TotpEnabled:                              settings.TotpEnabled,
 		TotpEncryptionKeyConfigured:              h.settingService.IsTotpEncryptionKeyConfigured(),
 		LoginAgreementEnabled:                    settings.LoginAgreementEnabled,
@@ -350,7 +349,6 @@ type UpdateSettingsRequest struct {
 	RegistrationEmailSuffixWhitelist []string                     `json:"registration_email_suffix_whitelist"`
 	PasswordResetEnabled             bool                         `json:"password_reset_enabled"`
 	FrontendURL                      string                       `json:"frontend_url"`
-	InvitationCodeEnabled            bool                         `json:"invitation_code_enabled"`
 	TotpEnabled                      bool                         `json:"totp_enabled"` // TOTP 双因素认证
 	LoginAgreementEnabled            bool                         `json:"login_agreement_enabled"`
 	LoginAgreementMode               string                       `json:"login_agreement_mode"`
@@ -1385,7 +1383,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		RegistrationEmailSuffixWhitelist: req.RegistrationEmailSuffixWhitelist,
 		PasswordResetEnabled:             req.PasswordResetEnabled,
 		FrontendURL:                      req.FrontendURL,
-		InvitationCodeEnabled:            req.InvitationCodeEnabled,
 		TotpEnabled:                      req.TotpEnabled,
 		LoginAgreementEnabled:            req.LoginAgreementEnabled,
 		LoginAgreementMode:               loginAgreementMode,
@@ -1783,7 +1780,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		RegistrationEmailSuffixWhitelist:         updatedSettings.RegistrationEmailSuffixWhitelist,
 		PasswordResetEnabled:                     updatedSettings.PasswordResetEnabled,
 		FrontendURL:                              updatedSettings.FrontendURL,
-		InvitationCodeEnabled:                    updatedSettings.InvitationCodeEnabled,
 		TotpEnabled:                              updatedSettings.TotpEnabled,
 		TotpEncryptionKeyConfigured:              h.settingService.IsTotpEncryptionKeyConfigured(),
 		LoginAgreementEnabled:                    updatedSettings.LoginAgreementEnabled,
@@ -1989,9 +1985,6 @@ func diffSettings(before *service.SystemSettings, after *service.SystemSettings,
 	}
 	if !equalStringSlice(before.RegistrationEmailSuffixWhitelist, after.RegistrationEmailSuffixWhitelist) {
 		changed = append(changed, "registration_email_suffix_whitelist")
-	}
-	if before.InvitationCodeEnabled != after.InvitationCodeEnabled {
-		changed = append(changed, "invitation_code_enabled")
 	}
 	if before.PasswordResetEnabled != after.PasswordResetEnabled {
 		changed = append(changed, "password_reset_enabled")
