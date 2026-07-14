@@ -306,7 +306,6 @@ func (h *AuthHandler) createEmailOAuthRegistrationPendingSession(
 
 type completeEmailOAuthRequest struct {
 	Password string `json:"password" binding:"required,min=6"`
-	AffCode  string `json:"aff_code,omitempty"`
 }
 
 func (h *AuthHandler) completeEmailOAuthRegistration(c *gin.Context, provider string) {
@@ -332,11 +331,6 @@ func (h *AuthHandler) completeEmailOAuthRegistration(c *gin.Context, provider st
 	if err := h.ensureBackendModeAllowsNewUserLogin(c.Request.Context()); err != nil {
 		response.ErrorFrom(c, err)
 		return
-	}
-
-	affiliateCode := strings.TrimSpace(req.AffCode)
-	if affiliateCode == "" {
-		affiliateCode = pendingSessionStringValue(session.UpstreamIdentityClaims, "aff_code")
 	}
 
 	tokenPair, user, err := h.authService.RegisterVerifiedOAuthEmailAccount(

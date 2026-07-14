@@ -274,13 +274,6 @@ func (s *AuthService) updateOAuthSignupSource(ctx context.Context, userID int64,
 	_ = client.User.UpdateOneID(userID).SetSignupSource(signupSource).Exec(ctx)
 }
 
-func oauthEmailFlowStringValue(value *string) string {
-	if value == nil {
-		return ""
-	}
-	return *value
-}
-
 // ValidatePasswordCredentials checks the local password without completing the
 // login flow. This is used by pending third-party account adoption flows before
 // the external identity has been bound.
