@@ -13,7 +13,6 @@ func ProvideAdminHandlers(
 	userHandler *admin.UserHandler,
 	groupHandler *admin.GroupHandler,
 	accountHandler *admin.AccountHandler,
-	announcementHandler *admin.AnnouncementHandler,
 	dataManagementHandler *admin.DataManagementHandler,
 	backupHandler *admin.BackupHandler,
 	oauthHandler *admin.OAuthHandler,
@@ -21,8 +20,6 @@ func ProvideAdminHandlers(
 	geminiOAuthHandler *admin.GeminiOAuthHandler,
 	antigravityOAuthHandler *admin.AntigravityOAuthHandler,
 	proxyHandler *admin.ProxyHandler,
-	redeemHandler *admin.RedeemHandler,
-	promoHandler *admin.PromoHandler,
 	settingHandler *admin.SettingHandler,
 	opsHandler *admin.OpsHandler,
 	systemHandler *admin.SystemHandler,
@@ -37,8 +34,6 @@ func ProvideAdminHandlers(
 	channelMonitorHandler *admin.ChannelMonitorHandler,
 	channelMonitorTemplateHandler *admin.ChannelMonitorRequestTemplateHandler,
 	contentModerationHandler *admin.ContentModerationHandler,
-	paymentHandler *admin.PaymentHandler,
-	affiliateHandler *admin.AffiliateHandler,
 	complianceHandler *admin.ComplianceHandler,
 ) *AdminHandlers {
 	return &AdminHandlers{
@@ -46,7 +41,6 @@ func ProvideAdminHandlers(
 		User:                   userHandler,
 		Group:                  groupHandler,
 		Account:                accountHandler,
-		Announcement:           announcementHandler,
 		DataManagement:         dataManagementHandler,
 		Backup:                 backupHandler,
 		OAuth:                  oauthHandler,
@@ -54,8 +48,6 @@ func ProvideAdminHandlers(
 		GeminiOAuth:            geminiOAuthHandler,
 		AntigravityOAuth:       antigravityOAuthHandler,
 		Proxy:                  proxyHandler,
-		Redeem:                 redeemHandler,
-		Promo:                  promoHandler,
 		Setting:                settingHandler,
 		Ops:                    opsHandler,
 		System:                 systemHandler,
@@ -70,8 +62,6 @@ func ProvideAdminHandlers(
 		ChannelMonitor:         channelMonitorHandler,
 		ChannelMonitorTemplate: channelMonitorTemplateHandler,
 		ContentModeration:      contentModerationHandler,
-		Payment:                paymentHandler,
-		Affiliate:              affiliateHandler,
 		Compliance:             complianceHandler,
 	}
 }
@@ -89,8 +79,8 @@ func ProvideSettingHandler(settingService *service.SettingService, buildInfo Bui
 }
 
 // ProvideAdminSettingHandler creates admin.SettingHandler with notification template APIs.
-func ProvideAdminSettingHandler(settingService *service.SettingService, emailService *service.EmailService, turnstileService *service.TurnstileService, opsService *service.OpsService, paymentConfigService *service.PaymentConfigService, paymentService *service.PaymentService, userAttributeService *service.UserAttributeService, notificationEmailService *service.NotificationEmailService) *admin.SettingHandler {
-	h := admin.NewSettingHandler(settingService, emailService, turnstileService, opsService, paymentConfigService, paymentService, userAttributeService)
+func ProvideAdminSettingHandler(settingService *service.SettingService, emailService *service.EmailService, turnstileService *service.TurnstileService, opsService *service.OpsService, userAttributeService *service.UserAttributeService, notificationEmailService *service.NotificationEmailService) *admin.SettingHandler {
+	h := admin.NewSettingHandler(settingService, emailService, turnstileService, opsService, userAttributeService)
 	h.SetNotificationEmailService(notificationEmailService)
 	return h
 }
@@ -101,17 +91,13 @@ func ProvideHandlers(
 	userHandler *UserHandler,
 	apiKeyHandler *APIKeyHandler,
 	usageHandler *UsageHandler,
-	redeemHandler *RedeemHandler,
 	subscriptionHandler *SubscriptionHandler,
-	announcementHandler *AnnouncementHandler,
 	channelMonitorUserHandler *ChannelMonitorUserHandler,
 	adminHandlers *AdminHandlers,
 	gatewayHandler *GatewayHandler,
 	openaiGatewayHandler *OpenAIGatewayHandler,
 	settingHandler *SettingHandler,
 	totpHandler *TotpHandler,
-	paymentHandler *PaymentHandler,
-	paymentWebhookHandler *PaymentWebhookHandler,
 	availableChannelHandler *AvailableChannelHandler,
 	_ *service.IdempotencyCoordinator,
 	_ *service.IdempotencyCleanupService,
@@ -121,17 +107,13 @@ func ProvideHandlers(
 		User:             userHandler,
 		APIKey:           apiKeyHandler,
 		Usage:            usageHandler,
-		Redeem:           redeemHandler,
 		Subscription:     subscriptionHandler,
-		Announcement:     announcementHandler,
 		ChannelMonitor:   channelMonitorUserHandler,
 		Admin:            adminHandlers,
 		Gateway:          gatewayHandler,
 		OpenAIGateway:    openaiGatewayHandler,
 		Setting:          settingHandler,
 		Totp:             totpHandler,
-		Payment:          paymentHandler,
-		PaymentWebhook:   paymentWebhookHandler,
 		AvailableChannel: availableChannelHandler,
 	}
 }
@@ -143,16 +125,12 @@ var ProviderSet = wire.NewSet(
 	NewUserHandler,
 	NewAPIKeyHandler,
 	NewUsageHandler,
-	NewRedeemHandler,
 	NewSubscriptionHandler,
-	NewAnnouncementHandler,
 	NewChannelMonitorUserHandler,
 	NewGatewayHandler,
 	NewOpenAIGatewayHandler,
 	NewTotpHandler,
 	ProvideSettingHandler,
-	NewPaymentHandler,
-	NewPaymentWebhookHandler,
 	NewAvailableChannelHandler,
 
 	// Admin handlers
@@ -160,7 +138,6 @@ var ProviderSet = wire.NewSet(
 	admin.NewUserHandler,
 	admin.NewGroupHandler,
 	admin.NewAccountHandler,
-	admin.NewAnnouncementHandler,
 	admin.NewDataManagementHandler,
 	admin.NewBackupHandler,
 	admin.NewOAuthHandler,
@@ -168,8 +145,6 @@ var ProviderSet = wire.NewSet(
 	admin.NewGeminiOAuthHandler,
 	admin.NewAntigravityOAuthHandler,
 	admin.NewProxyHandler,
-	admin.NewRedeemHandler,
-	admin.NewPromoHandler,
 	ProvideAdminSettingHandler,
 	admin.NewOpsHandler,
 	ProvideSystemHandler,
@@ -184,8 +159,6 @@ var ProviderSet = wire.NewSet(
 	admin.NewChannelMonitorHandler,
 	admin.NewChannelMonitorRequestTemplateHandler,
 	admin.NewContentModerationHandler,
-	admin.NewPaymentHandler,
-	admin.NewAffiliateHandler,
 	admin.NewComplianceHandler,
 
 	// AdminHandlers and Handlers constructors

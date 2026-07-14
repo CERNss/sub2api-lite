@@ -15,12 +15,6 @@ type Account func(*sql.Selector)
 // AccountGroup is the predicate function for accountgroup builders.
 type AccountGroup func(*sql.Selector)
 
-// Announcement is the predicate function for announcement builders.
-type Announcement func(*sql.Selector)
-
-// AnnouncementRead is the predicate function for announcementread builders.
-type AnnouncementRead func(*sql.Selector)
-
 // AuthIdentity is the predicate function for authidentity builders.
 type AuthIdentity func(*sql.Selector)
 
@@ -51,23 +45,8 @@ type IdempotencyRecord func(*sql.Selector)
 // IdentityAdoptionDecision is the predicate function for identityadoptiondecision builders.
 type IdentityAdoptionDecision func(*sql.Selector)
 
-// PaymentAuditLog is the predicate function for paymentauditlog builders.
-type PaymentAuditLog func(*sql.Selector)
-
-// PaymentOrder is the predicate function for paymentorder builders.
-type PaymentOrder func(*sql.Selector)
-
-// PaymentProviderInstance is the predicate function for paymentproviderinstance builders.
-type PaymentProviderInstance func(*sql.Selector)
-
 // PendingAuthSession is the predicate function for pendingauthsession builders.
 type PendingAuthSession func(*sql.Selector)
-
-// PromoCode is the predicate function for promocode builders.
-type PromoCode func(*sql.Selector)
-
-// PromoCodeUsage is the predicate function for promocodeusage builders.
-type PromoCodeUsage func(*sql.Selector)
 
 // Proxy is the predicate function for proxy builders.
 type Proxy func(*sql.Selector)

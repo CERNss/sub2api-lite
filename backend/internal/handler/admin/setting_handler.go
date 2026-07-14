@@ -60,21 +60,17 @@ type SettingHandler struct {
 	emailService             *service.EmailService
 	turnstileService         *service.TurnstileService
 	opsService               *service.OpsService
-	paymentConfigService     *service.PaymentConfigService
-	paymentService           *service.PaymentService
 	userAttributeService     *service.UserAttributeService
 	notificationEmailService *service.NotificationEmailService
 }
 
 // NewSettingHandler 创建系统设置处理器
-func NewSettingHandler(settingService *service.SettingService, emailService *service.EmailService, turnstileService *service.TurnstileService, opsService *service.OpsService, paymentConfigService *service.PaymentConfigService, paymentService *service.PaymentService, userAttributeService *service.UserAttributeService) *SettingHandler {
+func NewSettingHandler(settingService *service.SettingService, emailService *service.EmailService, turnstileService *service.TurnstileService, opsService *service.OpsService, userAttributeService *service.UserAttributeService) *SettingHandler {
 	return &SettingHandler{
 		settingService:       settingService,
 		emailService:         emailService,
 		turnstileService:     turnstileService,
 		opsService:           opsService,
-		paymentConfigService: paymentConfigService,
-		paymentService:       paymentService,
 		userAttributeService: userAttributeService,
 	}
 }
@@ -109,20 +105,10 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		})
 	}
 
-	// Load payment config
-	var paymentCfg *service.PaymentConfig
-	if h.paymentConfigService != nil {
-		paymentCfg, _ = h.paymentConfigService.GetPaymentConfig(c.Request.Context())
-	}
-	if paymentCfg == nil {
-		paymentCfg = &service.PaymentConfig{}
-	}
-
 	payload := dto.SystemSettings{
 		RegistrationEnabled:                      settings.RegistrationEnabled,
 		EmailVerifyEnabled:                       settings.EmailVerifyEnabled,
 		RegistrationEmailSuffixWhitelist:         settings.RegistrationEmailSuffixWhitelist,
-		PromoCodeEnabled:                         settings.PromoCodeEnabled,
 		PasswordResetEnabled:                     settings.PasswordResetEnabled,
 		FrontendURL:                              settings.FrontendURL,
 		InvitationCodeEnabled:                    settings.InvitationCodeEnabled,
@@ -231,10 +217,6 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		RiskControlEnabled:                       settings.RiskControlEnabled,
 		CyberSessionBlockEnabled:                 settings.CyberSessionBlockEnabled,
 		CyberSessionBlockTTLSeconds:              settings.CyberSessionBlockTTLSeconds,
-		AffiliateRebateRate:                      settings.AffiliateRebateRate,
-		AffiliateRebateFreezeHours:               settings.AffiliateRebateFreezeHours,
-		AffiliateRebateDurationDays:              settings.AffiliateRebateDurationDays,
-		AffiliateRebatePerInviteeCap:             settings.AffiliateRebatePerInviteeCap,
 		DefaultUserRPMLimit:                      settings.DefaultUserRPMLimit,
 		DefaultSubscriptions:                     defaultSubscriptions,
 		EnableModelFallback:                      settings.EnableModelFallback,
@@ -275,27 +257,6 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		SubscriptionExpiryNotifyEnabled:          settings.SubscriptionExpiryNotifyEnabled,
 		AccountQuotaNotifyEnabled:                settings.AccountQuotaNotifyEnabled,
 		AccountQuotaNotifyEmails:                 dto.NotifyEmailEntriesFromService(settings.AccountQuotaNotifyEmails),
-		PaymentEnabled:                           paymentCfg.Enabled,
-		PaymentMinAmount:                         paymentCfg.MinAmount,
-		PaymentMaxAmount:                         paymentCfg.MaxAmount,
-		PaymentDailyLimit:                        paymentCfg.DailyLimit,
-		PaymentOrderTimeoutMin:                   paymentCfg.OrderTimeoutMin,
-		PaymentMaxPendingOrders:                  paymentCfg.MaxPendingOrders,
-		PaymentEnabledTypes:                      paymentCfg.EnabledTypes,
-		PaymentBalanceDisabled:                   paymentCfg.BalanceDisabled,
-		PaymentBalanceRechargeMultiplier:         paymentCfg.BalanceRechargeMultiplier,
-		PaymentRechargeFeeRate:                   paymentCfg.RechargeFeeRate,
-		PaymentLoadBalanceStrat:                  paymentCfg.LoadBalanceStrategy,
-		PaymentProductNamePrefix:                 paymentCfg.ProductNamePrefix,
-		PaymentProductNameSuffix:                 paymentCfg.ProductNameSuffix,
-		PaymentHelpImageURL:                      paymentCfg.HelpImageURL,
-		PaymentHelpText:                          paymentCfg.HelpText,
-		PaymentCancelRateLimitEnabled:            paymentCfg.CancelRateLimitEnabled,
-		PaymentCancelRateLimitMax:                paymentCfg.CancelRateLimitMax,
-		PaymentCancelRateLimitWindow:             paymentCfg.CancelRateLimitWindow,
-		PaymentCancelRateLimitUnit:               paymentCfg.CancelRateLimitUnit,
-		PaymentCancelRateLimitMode:               paymentCfg.CancelRateLimitMode,
-		PaymentAlipayForceQRCode:                 paymentCfg.AlipayForceQRCode,
 
 		ChannelMonitorEnabled:                settings.ChannelMonitorEnabled,
 		ChannelMonitorDefaultIntervalSeconds: settings.ChannelMonitorDefaultIntervalSeconds,
@@ -1502,7 +1463,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		RegistrationEnabled:              req.RegistrationEnabled,
 		EmailVerifyEnabled:               req.EmailVerifyEnabled,
 		RegistrationEmailSuffixWhitelist: req.RegistrationEmailSuffixWhitelist,
-		PromoCodeEnabled:                 req.PromoCodeEnabled,
 		PasswordResetEnabled:             req.PasswordResetEnabled,
 		FrontendURL:                      req.FrontendURL,
 		InvitationCodeEnabled:            req.InvitationCodeEnabled,
@@ -1612,10 +1572,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		CustomEndpoints:                          customEndpointsJSON,
 		DefaultConcurrency:                       req.DefaultConcurrency,
 		DefaultBalance:                           req.DefaultBalance,
-		AffiliateRebateRate:                      affiliateRebateRate,
-		AffiliateRebateFreezeHours:               affiliateRebateFreezeHours,
-		AffiliateRebateDurationDays:              affiliateRebateDurationDays,
-		AffiliateRebatePerInviteeCap:             affiliateRebatePerInviteeCap,
 		DefaultUserRPMLimit:                      req.DefaultUserRPMLimit,
 		DefaultSubscriptions:                     defaultSubscriptions,
 		EnableModelFallback:                      req.EnableModelFallback,
@@ -1909,42 +1865,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		}
 	}
 
-	// Update payment configuration (integrated into system settings).
-	// Skip if no payment fields were provided (prevents accidental wipe).
-	if h.paymentConfigService != nil && hasPaymentFields(req) {
-		paymentReq := service.UpdatePaymentConfigRequest{
-			Enabled:                   req.PaymentEnabled,
-			MinAmount:                 req.PaymentMinAmount,
-			MaxAmount:                 req.PaymentMaxAmount,
-			DailyLimit:                req.PaymentDailyLimit,
-			OrderTimeoutMin:           req.PaymentOrderTimeoutMin,
-			MaxPendingOrders:          req.PaymentMaxPendingOrders,
-			EnabledTypes:              req.PaymentEnabledTypes,
-			BalanceDisabled:           req.PaymentBalanceDisabled,
-			BalanceRechargeMultiplier: req.PaymentBalanceRechargeMultiplier,
-			RechargeFeeRate:           req.PaymentRechargeFeeRate,
-			LoadBalanceStrategy:       req.PaymentLoadBalanceStrat,
-			ProductNamePrefix:         req.PaymentProductNamePrefix,
-			ProductNameSuffix:         req.PaymentProductNameSuffix,
-			HelpImageURL:              req.PaymentHelpImageURL,
-			HelpText:                  req.PaymentHelpText,
-			CancelRateLimitEnabled:    req.PaymentCancelRateLimitEnabled,
-			CancelRateLimitMax:        req.PaymentCancelRateLimitMax,
-			CancelRateLimitWindow:     req.PaymentCancelRateLimitWindow,
-			CancelRateLimitUnit:       req.PaymentCancelRateLimitUnit,
-			CancelRateLimitMode:       req.PaymentCancelRateLimitMode,
-			AlipayForceQRCode:         req.PaymentAlipayForceQRCode,
-		}
-		if err := h.paymentConfigService.UpdatePaymentConfig(c.Request.Context(), paymentReq); err != nil {
-			response.ErrorFrom(c, err)
-			return
-		}
-		// Refresh in-memory provider registry so config changes take effect immediately
-		if h.paymentService != nil {
-			h.paymentService.RefreshProviders(c.Request.Context())
-		}
-	}
-
 	h.auditSettingsUpdate(c, previousSettings, settings, previousAuthSourceDefaults, authSourceDefaults, req)
 
 	// 重新获取设置返回
@@ -1967,20 +1887,10 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		})
 	}
 
-	// Reload payment config for response
-	var updatedPaymentCfg *service.PaymentConfig
-	if h.paymentConfigService != nil {
-		updatedPaymentCfg, _ = h.paymentConfigService.GetPaymentConfig(c.Request.Context())
-	}
-	if updatedPaymentCfg == nil {
-		updatedPaymentCfg = &service.PaymentConfig{}
-	}
-
 	payload := dto.SystemSettings{
 		RegistrationEnabled:                      updatedSettings.RegistrationEnabled,
 		EmailVerifyEnabled:                       updatedSettings.EmailVerifyEnabled,
 		RegistrationEmailSuffixWhitelist:         updatedSettings.RegistrationEmailSuffixWhitelist,
-		PromoCodeEnabled:                         updatedSettings.PromoCodeEnabled,
 		PasswordResetEnabled:                     updatedSettings.PasswordResetEnabled,
 		FrontendURL:                              updatedSettings.FrontendURL,
 		InvitationCodeEnabled:                    updatedSettings.InvitationCodeEnabled,
@@ -2086,10 +1996,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		CustomEndpoints:                          dto.ParseCustomEndpoints(updatedSettings.CustomEndpoints),
 		DefaultConcurrency:                       updatedSettings.DefaultConcurrency,
 		DefaultBalance:                           updatedSettings.DefaultBalance,
-		AffiliateRebateRate:                      updatedSettings.AffiliateRebateRate,
-		AffiliateRebateFreezeHours:               updatedSettings.AffiliateRebateFreezeHours,
-		AffiliateRebateDurationDays:              updatedSettings.AffiliateRebateDurationDays,
-		AffiliateRebatePerInviteeCap:             updatedSettings.AffiliateRebatePerInviteeCap,
 		DefaultUserRPMLimit:                      updatedSettings.DefaultUserRPMLimit,
 		DefaultSubscriptions:                     updatedDefaultSubscriptions,
 		EnableModelFallback:                      updatedSettings.EnableModelFallback,
@@ -2129,27 +2035,6 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		SubscriptionExpiryNotifyEnabled:          updatedSettings.SubscriptionExpiryNotifyEnabled,
 		AccountQuotaNotifyEnabled:                updatedSettings.AccountQuotaNotifyEnabled,
 		AccountQuotaNotifyEmails:                 dto.NotifyEmailEntriesFromService(updatedSettings.AccountQuotaNotifyEmails),
-		PaymentEnabled:                           updatedPaymentCfg.Enabled,
-		PaymentMinAmount:                         updatedPaymentCfg.MinAmount,
-		PaymentMaxAmount:                         updatedPaymentCfg.MaxAmount,
-		PaymentDailyLimit:                        updatedPaymentCfg.DailyLimit,
-		PaymentOrderTimeoutMin:                   updatedPaymentCfg.OrderTimeoutMin,
-		PaymentMaxPendingOrders:                  updatedPaymentCfg.MaxPendingOrders,
-		PaymentEnabledTypes:                      updatedPaymentCfg.EnabledTypes,
-		PaymentBalanceDisabled:                   updatedPaymentCfg.BalanceDisabled,
-		PaymentBalanceRechargeMultiplier:         updatedPaymentCfg.BalanceRechargeMultiplier,
-		PaymentRechargeFeeRate:                   updatedPaymentCfg.RechargeFeeRate,
-		PaymentLoadBalanceStrat:                  updatedPaymentCfg.LoadBalanceStrategy,
-		PaymentProductNamePrefix:                 updatedPaymentCfg.ProductNamePrefix,
-		PaymentProductNameSuffix:                 updatedPaymentCfg.ProductNameSuffix,
-		PaymentHelpImageURL:                      updatedPaymentCfg.HelpImageURL,
-		PaymentHelpText:                          updatedPaymentCfg.HelpText,
-		PaymentCancelRateLimitEnabled:            updatedPaymentCfg.CancelRateLimitEnabled,
-		PaymentCancelRateLimitMax:                updatedPaymentCfg.CancelRateLimitMax,
-		PaymentCancelRateLimitWindow:             updatedPaymentCfg.CancelRateLimitWindow,
-		PaymentCancelRateLimitUnit:               updatedPaymentCfg.CancelRateLimitUnit,
-		PaymentCancelRateLimitMode:               updatedPaymentCfg.CancelRateLimitMode,
-		PaymentAlipayForceQRCode:                 updatedPaymentCfg.AlipayForceQRCode,
 
 		ChannelMonitorEnabled:                updatedSettings.ChannelMonitorEnabled,
 		ChannelMonitorDefaultIntervalSeconds: updatedSettings.ChannelMonitorDefaultIntervalSeconds,
@@ -2189,20 +2074,6 @@ func mapDingTalkValidateError(err error) string {
 	default:
 		return "dingtalk_corp_config_invalid"
 	}
-}
-
-func hasPaymentFields(req UpdateSettingsRequest) bool {
-	return req.PaymentEnabled != nil || req.PaymentMinAmount != nil ||
-		req.PaymentMaxAmount != nil || req.PaymentDailyLimit != nil ||
-		req.PaymentOrderTimeoutMin != nil || req.PaymentMaxPendingOrders != nil ||
-		req.PaymentEnabledTypes != nil || req.PaymentBalanceDisabled != nil ||
-		req.PaymentBalanceRechargeMultiplier != nil || req.PaymentRechargeFeeRate != nil ||
-		req.PaymentLoadBalanceStrat != nil || req.PaymentProductNamePrefix != nil ||
-		req.PaymentProductNameSuffix != nil || req.PaymentHelpImageURL != nil ||
-		req.PaymentHelpText != nil || req.PaymentCancelRateLimitEnabled != nil ||
-		req.PaymentCancelRateLimitMax != nil || req.PaymentCancelRateLimitWindow != nil ||
-		req.PaymentCancelRateLimitUnit != nil || req.PaymentCancelRateLimitMode != nil ||
-		req.PaymentAlipayForceQRCode != nil
 }
 
 func (h *SettingHandler) auditSettingsUpdate(c *gin.Context, before *service.SystemSettings, after *service.SystemSettings, beforeAuthSourceDefaults *service.AuthSourceDefaultSettings, afterAuthSourceDefaults *service.AuthSourceDefaultSettings, req UpdateSettingsRequest) {

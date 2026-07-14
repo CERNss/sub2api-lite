@@ -18,10 +18,6 @@ const {
   getBetaPolicySettings,
   getGroups,
   listProxies,
-  getProviders,
-  updateProvider,
-  createProvider,
-  deleteProvider,
   fetchPublicSettings,
   adminSettingsFetch,
   showError,
@@ -40,10 +36,6 @@ const {
   getBetaPolicySettings: vi.fn(),
   getGroups: vi.fn(),
   listProxies: vi.fn(),
-  getProviders: vi.fn(),
-  updateProvider: vi.fn(),
-  createProvider: vi.fn(),
-  deleteProvider: vi.fn(),
   fetchPublicSettings: vi.fn(),
   adminSettingsFetch: vi.fn(),
   showError: vi.fn(),
@@ -72,12 +64,6 @@ vi.mock("@/api", () => ({
     },
     proxies: {
       list: listProxies,
-    },
-    payment: {
-      getProviders,
-      updateProvider,
-      createProvider,
-      deleteProvider,
     },
   },
 }));
@@ -152,13 +138,6 @@ vi.mock("vue-i18n", async () => {
     "admin.settings.authSourceDefaults.defaultSubscriptionsLabel": "默认订阅",
     "admin.settings.authSourceDefaults.defaultSubscriptionsHint": "仅对当前认证来源生效，未配置时不追加来源专属订阅。",
     "admin.settings.authSourceDefaults.noSourceSubscriptions": "当前来源未配置专属默认订阅。",
-    "admin.settings.paymentVisibleMethods.methodLabel": "{title} 可见方式",
-    "admin.settings.paymentVisibleMethods.methodHint": "控制前台结算页是否展示该方式，以及展示时使用的来源键。",
-    "admin.settings.paymentVisibleMethods.sourceLabel": "支付来源",
-    "admin.settings.paymentVisibleMethods.sourceHint": "启用后必须明确选择一个来源；未配置状态不会对外展示该支付方式。",
-    "admin.settings.paymentVisibleMethods.sourceRequiredError": "{title} 已启用，请先选择支付来源。",
-    "admin.settings.payment.configGuide": "查看支付配置说明",
-    "admin.settings.payment.findProvider": "查看支持的支付方式",
     "admin.settings.openaiExperimentalScheduler.title": "OpenAI 实验调度策略",
     "admin.settings.openaiExperimentalScheduler.description": "默认关闭。开启后仅影响本网关在 OpenAI 账号间的实验性调度选择逻辑，不代表上游 OpenAI 官方能力。",
     "admin.settings.site.uploadImage": "上传图片",
@@ -293,7 +272,6 @@ const baseSettingsResponse = {
   registration_enabled: true,
   email_verify_enabled: false,
   registration_email_suffix_whitelist: [],
-  promo_code_enabled: true,
   invitation_code_enabled: false,
   password_reset_enabled: false,
   totp_enabled: false,
@@ -385,30 +363,6 @@ const baseSettingsResponse = {
   rewrite_message_cache_control: false,
   antigravity_user_agent_version: "",
   openai_codex_user_agent: "",
-  payment_enabled: true,
-  payment_min_amount: 1,
-  payment_max_amount: 10000,
-  payment_daily_limit: 50000,
-  payment_order_timeout_minutes: 30,
-  payment_max_pending_orders: 3,
-  payment_enabled_types: [],
-  payment_balance_disabled: false,
-  payment_balance_recharge_multiplier: 1,
-  payment_recharge_fee_rate: 0,
-  payment_load_balance_strategy: "round-robin",
-  payment_product_name_prefix: "",
-  payment_product_name_suffix: "",
-  payment_help_image_url: "",
-  payment_help_text: "",
-  payment_cancel_rate_limit_enabled: false,
-  payment_cancel_rate_limit_max: 10,
-  payment_cancel_rate_limit_window: 1,
-  payment_cancel_rate_limit_unit: "day",
-  payment_cancel_rate_limit_window_mode: "rolling",
-  payment_visible_method_alipay_source: "alipay_direct",
-  payment_visible_method_wxpay_source: "invalid-source",
-  payment_visible_method_alipay_enabled: true,
-  payment_visible_method_wxpay_enabled: true,
   openai_advanced_scheduler_enabled: false,
   balance_low_notify_enabled: false,
   balance_low_notify_threshold: 0,
@@ -434,8 +388,6 @@ function mountView() {
         Toggle: ToggleStub,
         Icon: true,
         ConfirmDialog: true,
-        PaymentProviderList: true,
-        PaymentProviderDialog: true,
         GroupBadge: true,
         GroupOptionItem: true,
         ProxySelector: true,
@@ -444,16 +396,6 @@ function mountView() {
       },
     },
   });
-}
-
-async function openPaymentTab(wrapper: ReturnType<typeof mountView>) {
-  const paymentTabButton = wrapper
-    .findAll("button")
-    .find((node) => node.text().includes("admin.settings.tabs.payment"));
-
-  expect(paymentTabButton).toBeDefined();
-  await paymentTabButton?.trigger("click");
-  await flushPromises();
 }
 
 async function openSecurityTab(wrapper: ReturnType<typeof mountView>) {
@@ -476,7 +418,7 @@ async function openUsersTab(wrapper: ReturnType<typeof mountView>) {
   await flushPromises();
 }
 
-describe("admin SettingsView payment visible method controls", () => {
+describe("admin SettingsView", () => {
   beforeEach(() => {
     getSettings.mockReset();
     updateSettings.mockReset();
@@ -491,10 +433,6 @@ describe("admin SettingsView payment visible method controls", () => {
     getBetaPolicySettings.mockReset();
     getGroups.mockReset();
     listProxies.mockReset();
-    getProviders.mockReset();
-    updateProvider.mockReset();
-    createProvider.mockReset();
-    deleteProvider.mockReset();
     fetchPublicSettings.mockReset();
     adminSettingsFetch.mockReset();
     showError.mockReset();
@@ -548,61 +486,8 @@ describe("admin SettingsView payment visible method controls", () => {
     listProxies.mockResolvedValue({
       items: [],
     });
-    getProviders.mockResolvedValue({
-      data: [],
-    });
     fetchPublicSettings.mockResolvedValue(undefined);
     adminSettingsFetch.mockResolvedValue(undefined);
-  });
-
-  it("does not render legacy visible payment method controls", async () => {
-    const wrapper = mountView();
-
-    await flushPromises();
-    await openPaymentTab(wrapper);
-
-    expect(wrapper.text()).not.toContain("可见方式");
-    expect(wrapper.text()).not.toContain("支付来源");
-  });
-
-  it("links payment guidance to README sections instead of removed payment docs", async () => {
-    const wrapper = mountView();
-
-    await flushPromises();
-    await openPaymentTab(wrapper);
-
-    const paymentLinks = wrapper
-      .findAll("a")
-      .filter((node) =>
-        ["查看支付配置说明", "查看支持的支付方式"].includes(node.text()),
-      );
-
-    expect(paymentLinks).toHaveLength(2);
-    expect(paymentLinks[0]?.attributes("href")).toBe(
-      "https://github.com/CERNss/sub2api-lite/blob/main/docs/PAYMENT_CN.md",
-    );
-    expect(paymentLinks[1]?.attributes("href")).toBe(
-      "https://github.com/CERNss/sub2api-lite/blob/main/docs/PAYMENT_CN.md#支持的支付方式",
-    );
-    for (const link of paymentLinks) {
-      expect(link.attributes("href")).toContain("docs/PAYMENT");
-    }
-  });
-
-  it("does not submit legacy visible payment method settings", async () => {
-    const wrapper = mountView();
-
-    await flushPromises();
-    await openPaymentTab(wrapper);
-    await wrapper.find("form").trigger("submit.prevent");
-    await flushPromises();
-
-    expect(updateSettings).toHaveBeenCalledTimes(1);
-    const payload = updateSettings.mock.calls[0]?.[0];
-    expect(payload).not.toHaveProperty("payment_visible_method_alipay_source");
-    expect(payload).not.toHaveProperty("payment_visible_method_wxpay_source");
-    expect(payload).not.toHaveProperty("payment_visible_method_alipay_enabled");
-    expect(payload).not.toHaveProperty("payment_visible_method_wxpay_enabled");
   });
 
   it("submits Anthropic cache TTL injection gateway setting", async () => {
@@ -734,69 +619,6 @@ describe("admin SettingsView payment visible method controls", () => {
     );
   });
 
-  it("updates provider enablement immediately and reloads providers", async () => {
-    const provider = {
-      id: 7,
-      provider_key: "alipay",
-      name: "Official Alipay",
-      config: {},
-      supported_types: ["alipay"],
-      enabled: false,
-      payment_mode: "",
-      refund_enabled: false,
-      allow_user_refund: false,
-      limits: "",
-      sort_order: 0,
-    };
-    getProviders.mockReset();
-    getProviders
-      .mockResolvedValueOnce({ data: [provider] })
-      .mockResolvedValueOnce({ data: [{ ...provider, enabled: true }] });
-    updateProvider.mockResolvedValue({ data: { ...provider, enabled: true } });
-
-    const PaymentProviderListStub = defineComponent({
-      emits: ["toggleField"],
-      setup(_, { emit }) {
-        return () =>
-          h(
-            "button",
-            {
-              class: "provider-toggle-stub",
-              onClick: () => emit("toggleField", provider, "enabled"),
-            },
-            "toggle provider",
-          );
-      },
-    });
-
-    const wrapper = mount(SettingsView, {
-      global: {
-        stubs: {
-          AppLayout: AppLayoutStub,
-          Select: SelectStub,
-          Toggle: ToggleStub,
-          Icon: true,
-          ConfirmDialog: true,
-          PaymentProviderList: PaymentProviderListStub,
-          PaymentProviderDialog: true,
-          GroupBadge: true,
-          GroupOptionItem: true,
-          ProxySelector: true,
-          ImageUpload: ImageUploadStub,
-          BackupSettings: true,
-        },
-      },
-    });
-
-    await flushPromises();
-    await openPaymentTab(wrapper);
-    await wrapper.get(".provider-toggle-stub").trigger("click");
-    await flushPromises();
-
-    expect(updateProvider).toHaveBeenCalledWith(7, { enabled: true });
-    expect(getProviders).toHaveBeenCalledTimes(2);
-  });
-
   it("renders advanced scheduler copy as local experimental gateway policy", async () => {
     const wrapper = mountView();
 
@@ -809,23 +631,6 @@ describe("admin SettingsView payment visible method controls", () => {
     expect(wrapper.text()).not.toContain("OpenAI 高级调度器");
   });
 
-  it("passes translated upload and remove labels to the payment help image uploader", async () => {
-    const wrapper = mountView();
-
-    await flushPromises();
-    await openPaymentTab(wrapper);
-
-    const imageUploads = wrapper.findAll(".image-upload-stub");
-    expect(imageUploads.length).toBeGreaterThan(0);
-
-    const paymentHelpImageUpload = imageUploads.find(
-      (node) => node.attributes("data-placeholder") === "admin.settings.payment.helpImagePlaceholder",
-    );
-
-    expect(paymentHelpImageUpload).toBeDefined();
-    expect(paymentHelpImageUpload?.attributes("data-upload-label")).toBe("上传图片");
-    expect(paymentHelpImageUpload?.attributes("data-remove-label")).toBe("移除");
-  });
 });
 
 describe("admin SettingsView wechat connect controls", () => {
@@ -843,10 +648,6 @@ describe("admin SettingsView wechat connect controls", () => {
     getBetaPolicySettings.mockReset();
     getGroups.mockReset();
     listProxies.mockReset();
-    getProviders.mockReset();
-    updateProvider.mockReset();
-    createProvider.mockReset();
-    deleteProvider.mockReset();
     fetchPublicSettings.mockReset();
     adminSettingsFetch.mockReset();
     showError.mockReset();
@@ -854,11 +655,9 @@ describe("admin SettingsView wechat connect controls", () => {
 
     getSettings.mockResolvedValue({
       ...baseSettingsResponse,
-      payment_visible_method_wxpay_source: "official_wxpay",
     });
     updateSettings.mockImplementation(async (payload) => ({
       ...baseSettingsResponse,
-      payment_visible_method_wxpay_source: "official_wxpay",
       ...payload,
     }));
     getWebSearchEmulationConfig.mockResolvedValue({
@@ -902,9 +701,6 @@ describe("admin SettingsView wechat connect controls", () => {
     getGroups.mockResolvedValue([]);
     listProxies.mockResolvedValue({
       items: [],
-    });
-    getProviders.mockResolvedValue({
-      data: [],
     });
     fetchPublicSettings.mockResolvedValue(undefined);
     adminSettingsFetch.mockResolvedValue(undefined);
@@ -1089,10 +885,6 @@ describe("admin SettingsView platform quota matrix", () => {
     getBetaPolicySettings.mockReset();
     getGroups.mockReset();
     listProxies.mockReset();
-    getProviders.mockReset();
-    updateProvider.mockReset();
-    createProvider.mockReset();
-    deleteProvider.mockReset();
     fetchPublicSettings.mockReset();
     adminSettingsFetch.mockReset();
     showError.mockReset();
@@ -1115,7 +907,6 @@ describe("admin SettingsView platform quota matrix", () => {
     getBetaPolicySettings.mockResolvedValue({});
     getGroups.mockResolvedValue([]);
     listProxies.mockResolvedValue({ items: [] });
-    getProviders.mockResolvedValue({ data: [] });
   });
 
   it("从 baseSettings 加载默认平台配额数据并在 Users tab 渲染 4 平台行", async () => {

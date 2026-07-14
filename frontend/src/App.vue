@@ -5,8 +5,7 @@ import Toast from '@/components/common/Toast.vue'
 import NavigationProgress from '@/components/common/NavigationProgress.vue'
 import AdminComplianceDialog from '@/components/admin/AdminComplianceDialog.vue'
 import { resolveRouteDocumentTitle } from '@/router/title'
-import AnnouncementPopup from '@/components/common/AnnouncementPopup.vue'
-import { useAppStore, useAuthStore, useSubscriptionStore, useAnnouncementStore, useAdminComplianceStore, useAdminSettingsStore } from '@/stores'
+import { useAppStore, useAuthStore, useSubscriptionStore, useAdminComplianceStore, useAdminSettingsStore } from '@/stores'
 import { getSetupStatus } from '@/api/setup'
 
 const router = useRouter()
@@ -14,7 +13,6 @@ const route = useRoute()
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const subscriptionStore = useSubscriptionStore()
-const announcementStore = useAnnouncementStore()
 const adminComplianceStore = useAdminComplianceStore()
 const adminSettingsStore = useAdminSettingsStore()
 
@@ -67,13 +65,7 @@ watch(
   { deep: true }
 )
 
-// Watch for authentication state and manage subscription data + announcements
-function onVisibilityChange() {
-  if (document.visibilityState === 'visible' && authStore.isAuthenticated) {
-    announcementStore.fetchAnnouncements()
-  }
-}
-
+// Watch for authentication state and manage subscription data
 function onAdminComplianceRequired(event: Event) {
   const detail = (event as CustomEvent<Record<string, string>>).detail || {}
   adminComplianceStore.requireAcknowledgement(detail)
@@ -81,7 +73,7 @@ function onAdminComplianceRequired(event: Event) {
 
 watch(
   () => authStore.isAuthenticated,
-  (isAuthenticated, oldValue) => {
+  (isAuthenticated) => {
     if (isAuthenticated) {
       if (authStore.isAdmin) {
         adminComplianceStore.fetchStatus().catch((error) => {
@@ -95,37 +87,16 @@ watch(
       })
       subscriptionStore.startPolling()
 
-      // Announcements: new login vs page refresh restore
-      if (oldValue === false) {
-        // New login: delay 3s then force fetch
-        setTimeout(() => announcementStore.fetchAnnouncements(true), 3000)
-      } else {
-        // Page refresh restore (oldValue was undefined)
-        announcementStore.fetchAnnouncements()
-      }
-
-      // Register visibility change listener
-      document.addEventListener('visibilitychange', onVisibilityChange)
     } else {
       // User logged out: clear data and stop polling
       subscriptionStore.clear()
-      announcementStore.reset()
       adminComplianceStore.reset()
-      document.removeEventListener('visibilitychange', onVisibilityChange)
     }
   },
   { immediate: true }
 )
 
-// Route change trigger (throttled by store)
-router.afterEach(() => {
-  if (authStore.isAuthenticated) {
-    announcementStore.fetchAnnouncements()
-  }
-})
-
 onBeforeUnmount(() => {
-  document.removeEventListener('visibilitychange', onVisibilityChange)
   window.removeEventListener('admin-compliance-required', onAdminComplianceRequired)
 })
 
@@ -155,6 +126,5 @@ onMounted(async () => {
   <NavigationProgress />
   <RouterView />
   <Toast />
-  <AnnouncementPopup />
   <AdminComplianceDialog />
 </template>

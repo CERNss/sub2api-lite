@@ -13,14 +13,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/CERNss/sub2api-lite/ent/announcementread"
 	"github.com/CERNss/sub2api-lite/ent/apikey"
 	"github.com/CERNss/sub2api-lite/ent/authidentity"
 	"github.com/CERNss/sub2api-lite/ent/group"
-	"github.com/CERNss/sub2api-lite/ent/paymentorder"
 	"github.com/CERNss/sub2api-lite/ent/pendingauthsession"
 	"github.com/CERNss/sub2api-lite/ent/predicate"
-	"github.com/CERNss/sub2api-lite/ent/promocodeusage"
 	"github.com/CERNss/sub2api-lite/ent/redeemcode"
 	"github.com/CERNss/sub2api-lite/ent/usagelog"
 	"github.com/CERNss/sub2api-lite/ent/user"
@@ -41,12 +38,9 @@ type UserQuery struct {
 	withRedeemCodes           *RedeemCodeQuery
 	withSubscriptions         *UserSubscriptionQuery
 	withAssignedSubscriptions *UserSubscriptionQuery
-	withAnnouncementReads     *AnnouncementReadQuery
 	withAllowedGroups         *GroupQuery
 	withUsageLogs             *UsageLogQuery
 	withAttributeValues       *UserAttributeValueQuery
-	withPromoCodeUsages       *PromoCodeUsageQuery
-	withPaymentOrders         *PaymentOrderQuery
 	withAuthIdentities        *AuthIdentityQuery
 	withPendingAuthSessions   *PendingAuthSessionQuery
 	withPlatformQuotas        *UserPlatformQuotaQuery
@@ -176,28 +170,6 @@ func (_q *UserQuery) QueryAssignedSubscriptions() *UserSubscriptionQuery {
 	return query
 }
 
-// QueryAnnouncementReads chains the current query on the "announcement_reads" edge.
-func (_q *UserQuery) QueryAnnouncementReads() *AnnouncementReadQuery {
-	query := (&AnnouncementReadClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(announcementread.Table, announcementread.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.AnnouncementReadsTable, user.AnnouncementReadsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // QueryAllowedGroups chains the current query on the "allowed_groups" edge.
 func (_q *UserQuery) QueryAllowedGroups() *GroupQuery {
 	query := (&GroupClient{config: _q.config}).Query()
@@ -257,50 +229,6 @@ func (_q *UserQuery) QueryAttributeValues() *UserAttributeValueQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(userattributevalue.Table, userattributevalue.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.AttributeValuesTable, user.AttributeValuesColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryPromoCodeUsages chains the current query on the "promo_code_usages" edge.
-func (_q *UserQuery) QueryPromoCodeUsages() *PromoCodeUsageQuery {
-	query := (&PromoCodeUsageClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(promocodeusage.Table, promocodeusage.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.PromoCodeUsagesTable, user.PromoCodeUsagesColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryPaymentOrders chains the current query on the "payment_orders" edge.
-func (_q *UserQuery) QueryPaymentOrders() *PaymentOrderQuery {
-	query := (&PaymentOrderClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(paymentorder.Table, paymentorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.PaymentOrdersTable, user.PaymentOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -592,12 +520,9 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withRedeemCodes:           _q.withRedeemCodes.Clone(),
 		withSubscriptions:         _q.withSubscriptions.Clone(),
 		withAssignedSubscriptions: _q.withAssignedSubscriptions.Clone(),
-		withAnnouncementReads:     _q.withAnnouncementReads.Clone(),
 		withAllowedGroups:         _q.withAllowedGroups.Clone(),
 		withUsageLogs:             _q.withUsageLogs.Clone(),
 		withAttributeValues:       _q.withAttributeValues.Clone(),
-		withPromoCodeUsages:       _q.withPromoCodeUsages.Clone(),
-		withPaymentOrders:         _q.withPaymentOrders.Clone(),
 		withAuthIdentities:        _q.withAuthIdentities.Clone(),
 		withPendingAuthSessions:   _q.withPendingAuthSessions.Clone(),
 		withPlatformQuotas:        _q.withPlatformQuotas.Clone(),
@@ -652,17 +577,6 @@ func (_q *UserQuery) WithAssignedSubscriptions(opts ...func(*UserSubscriptionQue
 	return _q
 }
 
-// WithAnnouncementReads tells the query-builder to eager-load the nodes that are connected to
-// the "announcement_reads" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithAnnouncementReads(opts ...func(*AnnouncementReadQuery)) *UserQuery {
-	query := (&AnnouncementReadClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withAnnouncementReads = query
-	return _q
-}
-
 // WithAllowedGroups tells the query-builder to eager-load the nodes that are connected to
 // the "allowed_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (_q *UserQuery) WithAllowedGroups(opts ...func(*GroupQuery)) *UserQuery {
@@ -693,28 +607,6 @@ func (_q *UserQuery) WithAttributeValues(opts ...func(*UserAttributeValueQuery))
 		opt(query)
 	}
 	_q.withAttributeValues = query
-	return _q
-}
-
-// WithPromoCodeUsages tells the query-builder to eager-load the nodes that are connected to
-// the "promo_code_usages" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithPromoCodeUsages(opts ...func(*PromoCodeUsageQuery)) *UserQuery {
-	query := (&PromoCodeUsageClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withPromoCodeUsages = query
-	return _q
-}
-
-// WithPaymentOrders tells the query-builder to eager-load the nodes that are connected to
-// the "payment_orders" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithPaymentOrders(opts ...func(*PaymentOrderQuery)) *UserQuery {
-	query := (&PaymentOrderClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withPaymentOrders = query
 	return _q
 }
 
@@ -840,17 +732,14 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [14]bool{
+		loadedTypes = [11]bool{
 			_q.withAPIKeys != nil,
 			_q.withRedeemCodes != nil,
 			_q.withSubscriptions != nil,
 			_q.withAssignedSubscriptions != nil,
-			_q.withAnnouncementReads != nil,
 			_q.withAllowedGroups != nil,
 			_q.withUsageLogs != nil,
 			_q.withAttributeValues != nil,
-			_q.withPromoCodeUsages != nil,
-			_q.withPaymentOrders != nil,
 			_q.withAuthIdentities != nil,
 			_q.withPendingAuthSessions != nil,
 			_q.withPlatformQuotas != nil,
@@ -908,13 +797,6 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := _q.withAnnouncementReads; query != nil {
-		if err := _q.loadAnnouncementReads(ctx, query, nodes,
-			func(n *User) { n.Edges.AnnouncementReads = []*AnnouncementRead{} },
-			func(n *User, e *AnnouncementRead) { n.Edges.AnnouncementReads = append(n.Edges.AnnouncementReads, e) }); err != nil {
-			return nil, err
-		}
-	}
 	if query := _q.withAllowedGroups; query != nil {
 		if err := _q.loadAllowedGroups(ctx, query, nodes,
 			func(n *User) { n.Edges.AllowedGroups = []*Group{} },
@@ -933,20 +815,6 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadAttributeValues(ctx, query, nodes,
 			func(n *User) { n.Edges.AttributeValues = []*UserAttributeValue{} },
 			func(n *User, e *UserAttributeValue) { n.Edges.AttributeValues = append(n.Edges.AttributeValues, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := _q.withPromoCodeUsages; query != nil {
-		if err := _q.loadPromoCodeUsages(ctx, query, nodes,
-			func(n *User) { n.Edges.PromoCodeUsages = []*PromoCodeUsage{} },
-			func(n *User, e *PromoCodeUsage) { n.Edges.PromoCodeUsages = append(n.Edges.PromoCodeUsages, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := _q.withPaymentOrders; query != nil {
-		if err := _q.loadPaymentOrders(ctx, query, nodes,
-			func(n *User) { n.Edges.PaymentOrders = []*PaymentOrder{} },
-			func(n *User, e *PaymentOrder) { n.Edges.PaymentOrders = append(n.Edges.PaymentOrders, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1109,36 +977,6 @@ func (_q *UserQuery) loadAssignedSubscriptions(ctx context.Context, query *UserS
 	}
 	return nil
 }
-func (_q *UserQuery) loadAnnouncementReads(ctx context.Context, query *AnnouncementReadQuery, nodes []*User, init func(*User), assign func(*User, *AnnouncementRead)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(announcementread.FieldUserID)
-	}
-	query.Where(predicate.AnnouncementRead(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.AnnouncementReadsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.UserID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
 func (_q *UserQuery) loadAllowedGroups(ctx context.Context, query *GroupQuery, nodes []*User, init func(*User), assign func(*User, *Group)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int64]*User)
@@ -1245,66 +1083,6 @@ func (_q *UserQuery) loadAttributeValues(ctx context.Context, query *UserAttribu
 	}
 	query.Where(predicate.UserAttributeValue(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.AttributeValuesColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.UserID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (_q *UserQuery) loadPromoCodeUsages(ctx context.Context, query *PromoCodeUsageQuery, nodes []*User, init func(*User), assign func(*User, *PromoCodeUsage)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(promocodeusage.FieldUserID)
-	}
-	query.Where(predicate.PromoCodeUsage(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.PromoCodeUsagesColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.UserID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (_q *UserQuery) loadPaymentOrders(ctx context.Context, query *PaymentOrderQuery, nodes []*User, init func(*User), assign func(*User, *PaymentOrder)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(paymentorder.FieldUserID)
-	}
-	query.Where(predicate.PaymentOrder(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.PaymentOrdersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -14,8 +14,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/CERNss/sub2api-lite/ent/account"
 	"github.com/CERNss/sub2api-lite/ent/accountgroup"
-	"github.com/CERNss/sub2api-lite/ent/announcement"
-	"github.com/CERNss/sub2api-lite/ent/announcementread"
 	"github.com/CERNss/sub2api-lite/ent/apikey"
 	"github.com/CERNss/sub2api-lite/ent/authidentity"
 	"github.com/CERNss/sub2api-lite/ent/authidentitychannel"
@@ -27,12 +25,7 @@ import (
 	"github.com/CERNss/sub2api-lite/ent/group"
 	"github.com/CERNss/sub2api-lite/ent/idempotencyrecord"
 	"github.com/CERNss/sub2api-lite/ent/identityadoptiondecision"
-	"github.com/CERNss/sub2api-lite/ent/paymentauditlog"
-	"github.com/CERNss/sub2api-lite/ent/paymentorder"
-	"github.com/CERNss/sub2api-lite/ent/paymentproviderinstance"
 	"github.com/CERNss/sub2api-lite/ent/pendingauthsession"
-	"github.com/CERNss/sub2api-lite/ent/promocode"
-	"github.com/CERNss/sub2api-lite/ent/promocodeusage"
 	"github.com/CERNss/sub2api-lite/ent/proxy"
 	"github.com/CERNss/sub2api-lite/ent/redeemcode"
 	"github.com/CERNss/sub2api-lite/ent/securitysecret"
@@ -110,8 +103,6 @@ func checkColumn(t, c string) error {
 			apikey.Table:                        apikey.ValidColumn,
 			account.Table:                       account.ValidColumn,
 			accountgroup.Table:                  accountgroup.ValidColumn,
-			announcement.Table:                  announcement.ValidColumn,
-			announcementread.Table:              announcementread.ValidColumn,
 			authidentity.Table:                  authidentity.ValidColumn,
 			authidentitychannel.Table:           authidentitychannel.ValidColumn,
 			channelmonitor.Table:                channelmonitor.ValidColumn,
@@ -122,12 +113,7 @@ func checkColumn(t, c string) error {
 			group.Table:                         group.ValidColumn,
 			idempotencyrecord.Table:             idempotencyrecord.ValidColumn,
 			identityadoptiondecision.Table:      identityadoptiondecision.ValidColumn,
-			paymentauditlog.Table:               paymentauditlog.ValidColumn,
-			paymentorder.Table:                  paymentorder.ValidColumn,
-			paymentproviderinstance.Table:       paymentproviderinstance.ValidColumn,
 			pendingauthsession.Table:            pendingauthsession.ValidColumn,
-			promocode.Table:                     promocode.ValidColumn,
-			promocodeusage.Table:                promocodeusage.ValidColumn,
 			proxy.Table:                         proxy.ValidColumn,
 			redeemcode.Table:                    redeemcode.ValidColumn,
 			securitysecret.Table:                securitysecret.ValidColumn,

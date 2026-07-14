@@ -143,7 +143,6 @@ func (s *AuthService) loginOrRegisterVerifiedEmailOAuth(
 			logger.LegacyPrintf("service.auth", "[Auth] Failed to apply %s first bind defaults: %v", providerType, err)
 		}
 	} else {
-		user = s.applyOAuthSignupPromoCode(ctx, user, promoCode)
 	}
 	s.RecordSuccessfulLogin(ctx, user.ID)
 
@@ -204,7 +203,6 @@ func (s *AuthService) createEmailOAuthUser(ctx context.Context, email, username,
 	s.assignSubscriptions(ctx, user.ID, grantPlan.Subscriptions, "auto assigned by signup defaults")
 	// snapshot user × platform quota（fail-open）
 	_ = s.snapshotPlatformQuotaDefaults(ctx, user.ID, &grantPlan)
-	s.bindOAuthAffiliate(ctx, user.ID, affiliateCode)
 	if invitationRedeemCode != nil {
 		if err := s.useOAuthRegistrationInvitation(ctx, invitationRedeemCode.ID, user.ID); err != nil {
 			_ = s.RollbackOAuthEmailAccountCreation(ctx, user.ID, invitationCode)

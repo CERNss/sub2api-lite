@@ -69,18 +69,12 @@ const (
 	EdgeSubscriptions = "subscriptions"
 	// EdgeAssignedSubscriptions holds the string denoting the assigned_subscriptions edge name in mutations.
 	EdgeAssignedSubscriptions = "assigned_subscriptions"
-	// EdgeAnnouncementReads holds the string denoting the announcement_reads edge name in mutations.
-	EdgeAnnouncementReads = "announcement_reads"
 	// EdgeAllowedGroups holds the string denoting the allowed_groups edge name in mutations.
 	EdgeAllowedGroups = "allowed_groups"
 	// EdgeUsageLogs holds the string denoting the usage_logs edge name in mutations.
 	EdgeUsageLogs = "usage_logs"
 	// EdgeAttributeValues holds the string denoting the attribute_values edge name in mutations.
 	EdgeAttributeValues = "attribute_values"
-	// EdgePromoCodeUsages holds the string denoting the promo_code_usages edge name in mutations.
-	EdgePromoCodeUsages = "promo_code_usages"
-	// EdgePaymentOrders holds the string denoting the payment_orders edge name in mutations.
-	EdgePaymentOrders = "payment_orders"
 	// EdgeAuthIdentities holds the string denoting the auth_identities edge name in mutations.
 	EdgeAuthIdentities = "auth_identities"
 	// EdgePendingAuthSessions holds the string denoting the pending_auth_sessions edge name in mutations.
@@ -119,13 +113,6 @@ const (
 	AssignedSubscriptionsInverseTable = "user_subscriptions"
 	// AssignedSubscriptionsColumn is the table column denoting the assigned_subscriptions relation/edge.
 	AssignedSubscriptionsColumn = "assigned_by"
-	// AnnouncementReadsTable is the table that holds the announcement_reads relation/edge.
-	AnnouncementReadsTable = "announcement_reads"
-	// AnnouncementReadsInverseTable is the table name for the AnnouncementRead entity.
-	// It exists in this package in order to avoid circular dependency with the "announcementread" package.
-	AnnouncementReadsInverseTable = "announcement_reads"
-	// AnnouncementReadsColumn is the table column denoting the announcement_reads relation/edge.
-	AnnouncementReadsColumn = "user_id"
 	// AllowedGroupsTable is the table that holds the allowed_groups relation/edge. The primary key declared below.
 	AllowedGroupsTable = "user_allowed_groups"
 	// AllowedGroupsInverseTable is the table name for the Group entity.
@@ -145,20 +132,6 @@ const (
 	AttributeValuesInverseTable = "user_attribute_values"
 	// AttributeValuesColumn is the table column denoting the attribute_values relation/edge.
 	AttributeValuesColumn = "user_id"
-	// PromoCodeUsagesTable is the table that holds the promo_code_usages relation/edge.
-	PromoCodeUsagesTable = "promo_code_usages"
-	// PromoCodeUsagesInverseTable is the table name for the PromoCodeUsage entity.
-	// It exists in this package in order to avoid circular dependency with the "promocodeusage" package.
-	PromoCodeUsagesInverseTable = "promo_code_usages"
-	// PromoCodeUsagesColumn is the table column denoting the promo_code_usages relation/edge.
-	PromoCodeUsagesColumn = "user_id"
-	// PaymentOrdersTable is the table that holds the payment_orders relation/edge.
-	PaymentOrdersTable = "payment_orders"
-	// PaymentOrdersInverseTable is the table name for the PaymentOrder entity.
-	// It exists in this package in order to avoid circular dependency with the "paymentorder" package.
-	PaymentOrdersInverseTable = "payment_orders"
-	// PaymentOrdersColumn is the table column denoting the payment_orders relation/edge.
-	PaymentOrdersColumn = "user_id"
 	// AuthIdentitiesTable is the table that holds the auth_identities relation/edge.
 	AuthIdentitiesTable = "auth_identities"
 	// AuthIdentitiesInverseTable is the table name for the AuthIdentity entity.
@@ -466,20 +439,6 @@ func ByAssignedSubscriptions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOp
 	}
 }
 
-// ByAnnouncementReadsCount orders the results by announcement_reads count.
-func ByAnnouncementReadsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAnnouncementReadsStep(), opts...)
-	}
-}
-
-// ByAnnouncementReads orders the results by announcement_reads terms.
-func ByAnnouncementReads(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAnnouncementReadsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByAllowedGroupsCount orders the results by allowed_groups count.
 func ByAllowedGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -519,34 +478,6 @@ func ByAttributeValuesCount(opts ...sql.OrderTermOption) OrderOption {
 func ByAttributeValues(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newAttributeValuesStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByPromoCodeUsagesCount orders the results by promo_code_usages count.
-func ByPromoCodeUsagesCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newPromoCodeUsagesStep(), opts...)
-	}
-}
-
-// ByPromoCodeUsages orders the results by promo_code_usages terms.
-func ByPromoCodeUsages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newPromoCodeUsagesStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByPaymentOrdersCount orders the results by payment_orders count.
-func ByPaymentOrdersCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newPaymentOrdersStep(), opts...)
-	}
-}
-
-// ByPaymentOrders orders the results by payment_orders terms.
-func ByPaymentOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newPaymentOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -633,13 +564,6 @@ func newAssignedSubscriptionsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, AssignedSubscriptionsTable, AssignedSubscriptionsColumn),
 	)
 }
-func newAnnouncementReadsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AnnouncementReadsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, AnnouncementReadsTable, AnnouncementReadsColumn),
-	)
-}
 func newAllowedGroupsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -659,20 +583,6 @@ func newAttributeValuesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AttributeValuesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, AttributeValuesTable, AttributeValuesColumn),
-	)
-}
-func newPromoCodeUsagesStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(PromoCodeUsagesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, PromoCodeUsagesTable, PromoCodeUsagesColumn),
-	)
-}
-func newPaymentOrdersStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(PaymentOrdersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, PaymentOrdersTable, PaymentOrdersColumn),
 	)
 }
 func newAuthIdentitiesStep() *sqlgraph.Step {

@@ -142,3 +142,6 @@ docs/*
 frontend/coverage/
 aicodex
 output/
+
+# pnpm store created by containerized installs
+.pnpm-store/

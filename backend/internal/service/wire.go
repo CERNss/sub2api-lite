@@ -5,9 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	dbent "github.com/CERNss/sub2api-lite/ent"
 	"github.com/CERNss/sub2api-lite/internal/config"
-	"github.com/CERNss/sub2api-lite/internal/payment"
 	"github.com/CERNss/sub2api-lite/internal/pkg/antigravity"
 	"github.com/CERNss/sub2api-lite/internal/pkg/logger"
 	"github.com/google/wire"
@@ -521,14 +519,11 @@ var ProviderSet = wire.NewSet(
 	NewGroupService,
 	NewAccountService,
 	NewProxyService,
-	NewRedeemService,
-	NewPromoService,
 	NewUsageService,
 	NewDashboardService,
 	ProvidePricingService,
 	NewBillingService,
 	ProvideBillingCacheService,
-	NewAnnouncementService,
 	NewAdminService,
 	NewGatewayService,
 	NewOpenAIGatewayService,
@@ -598,10 +593,6 @@ var ProviderSet = wire.NewSet(
 	NewChannelService,
 	NewModelPricingResolver,
 	NewContentModerationService,
-	NewAffiliateService,
-	ProvidePaymentConfigService,
-	ProvidePaymentService,
-	ProvidePaymentOrderExpiryService,
 	ProvideBalanceNotifyService,
 	ProvideChannelMonitorService,
 	ProvideChannelMonitorRunner,
@@ -616,31 +607,10 @@ func ProvideUserPlatformQuotaUsageFlusher(cfg *config.Config, cache BillingCache
 	return svc
 }
 
-// ProvidePaymentConfigService wraps NewPaymentConfigService to accept the named
-// payment.EncryptionKey type instead of raw []byte, avoiding Wire ambiguity.
-func ProvidePaymentConfigService(entClient *dbent.Client, settingRepo SettingRepository, key payment.EncryptionKey) *PaymentConfigService {
-	return NewPaymentConfigService(entClient, settingRepo, []byte(key))
-}
-
 // ProvideBalanceNotifyService creates BalanceNotifyService
 func ProvideBalanceNotifyService(emailService *EmailService, settingRepo SettingRepository, accountRepo AccountRepository, notificationEmailService *NotificationEmailService) *BalanceNotifyService {
 	svc := NewBalanceNotifyService(emailService, settingRepo, accountRepo)
 	svc.SetNotificationEmailService(notificationEmailService)
-	return svc
-}
-
-// ProvidePaymentService creates PaymentService and attaches notification email delivery.
-func ProvidePaymentService(entClient *dbent.Client, registry *payment.Registry, loadBalancer payment.LoadBalancer, redeemService *RedeemService, subscriptionSvc *SubscriptionService, configService *PaymentConfigService, userRepo UserRepository, groupRepo GroupRepository, affiliateService *AffiliateService, notificationEmailService *NotificationEmailService) *PaymentService {
-	svc := NewPaymentService(entClient, registry, loadBalancer, redeemService, subscriptionSvc, configService, userRepo, groupRepo, affiliateService)
-	svc.SetNotificationEmailService(notificationEmailService)
-	return svc
-}
-
-// ProvidePaymentOrderExpiryService creates and starts PaymentOrderExpiryService.
-func ProvidePaymentOrderExpiryService(paymentSvc *PaymentService, lockCache LeaderLockCache, db *sql.DB) *PaymentOrderExpiryService {
-	svc := NewPaymentOrderExpiryService(paymentSvc, 60*time.Second)
-	svc.SetLeaderLock(lockCache, db)
-	svc.Start()
 	return svc
 }
 

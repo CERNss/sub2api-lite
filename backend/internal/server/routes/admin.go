@@ -36,7 +36,6 @@ func RegisterAdminRoutes(
 		registerAccountRoutes(admin, h)
 
 		// 公告管理
-		registerAnnouncementRoutes(admin, h)
 
 		// OpenAI OAuth
 		registerOpenAIOAuthRoutes(admin, h)
@@ -51,10 +50,8 @@ func RegisterAdminRoutes(
 		registerProxyRoutes(admin, h)
 
 		// 卡密管理
-		registerRedeemCodeRoutes(admin, h)
 
 		// 优惠码管理
-		registerPromoCodeRoutes(admin, h)
 
 		// 系统设置
 		registerSettingsRoutes(admin, h)
@@ -102,7 +99,6 @@ func RegisterAdminRoutes(
 		registerContentModerationRoutes(admin, h)
 
 		// 邀请返利（专属用户管理）
-		registerAffiliateRoutes(admin, h)
 	}
 }
 
@@ -344,18 +340,6 @@ func registerAccountRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
 	}
 }
 
-func registerAnnouncementRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
-	announcements := admin.Group("/announcements")
-	{
-		announcements.GET("", h.Admin.Announcement.List)
-		announcements.POST("", h.Admin.Announcement.Create)
-		announcements.GET("/:id", h.Admin.Announcement.GetByID)
-		announcements.PUT("/:id", h.Admin.Announcement.Update)
-		announcements.DELETE("/:id", h.Admin.Announcement.Delete)
-		announcements.GET("/:id/read-status", h.Admin.Announcement.ListReadStatus)
-	}
-}
-
 func registerOpenAIOAuthRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
 	openai := admin.Group("/openai")
 	{
@@ -404,34 +388,6 @@ func registerProxyRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
 		proxies.GET("/:id/accounts", h.Admin.Proxy.GetProxyAccounts)
 		proxies.POST("/batch-delete", h.Admin.Proxy.BatchDelete)
 		proxies.POST("/batch", h.Admin.Proxy.BatchCreate)
-	}
-}
-
-func registerRedeemCodeRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
-	codes := admin.Group("/redeem-codes")
-	{
-		codes.GET("", h.Admin.Redeem.List)
-		codes.GET("/stats", h.Admin.Redeem.GetStats)
-		codes.GET("/export", h.Admin.Redeem.Export)
-		codes.GET("/:id", h.Admin.Redeem.GetByID)
-		codes.POST("/create-and-redeem", h.Admin.Redeem.CreateAndRedeem)
-		codes.POST("/generate", h.Admin.Redeem.Generate)
-		codes.DELETE("/:id", h.Admin.Redeem.Delete)
-		codes.POST("/batch-delete", h.Admin.Redeem.BatchDelete)
-		codes.POST("/batch-update", h.Admin.Redeem.BatchUpdate)
-		codes.POST("/:id/expire", h.Admin.Redeem.Expire)
-	}
-}
-
-func registerPromoCodeRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
-	promoCodes := admin.Group("/promo-codes")
-	{
-		promoCodes.GET("", h.Admin.Promo.List)
-		promoCodes.GET("/:id", h.Admin.Promo.GetByID)
-		promoCodes.POST("", h.Admin.Promo.Create)
-		promoCodes.PUT("/:id", h.Admin.Promo.Update)
-		promoCodes.DELETE("/:id", h.Admin.Promo.Delete)
-		promoCodes.GET("/:id/usages", h.Admin.Promo.GetUsages)
 	}
 }
 
@@ -645,25 +601,5 @@ func registerChannelMonitorRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
 		templates.DELETE("/:id", h.Admin.ChannelMonitorTemplate.Delete)
 		templates.GET("/:id/monitors", h.Admin.ChannelMonitorTemplate.AssociatedMonitors)
 		templates.POST("/:id/apply", h.Admin.ChannelMonitorTemplate.Apply)
-	}
-}
-
-// registerAffiliateRoutes 注册邀请返利的管理端路由（专属用户配置）
-func registerAffiliateRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
-	affiliates := admin.Group("/affiliates")
-	{
-		affiliates.GET("/invites", h.Admin.Affiliate.ListInviteRecords)
-		affiliates.GET("/rebates", h.Admin.Affiliate.ListRebateRecords)
-		affiliates.GET("/transfers", h.Admin.Affiliate.ListTransferRecords)
-
-		users := affiliates.Group("/users")
-		{
-			users.GET("", h.Admin.Affiliate.ListUsers)
-			users.GET("/lookup", h.Admin.Affiliate.LookupUsers)
-			users.POST("/batch-rate", h.Admin.Affiliate.BatchSetRate)
-			users.GET("/:user_id/overview", h.Admin.Affiliate.GetUserOverview)
-			users.PUT("/:user_id", h.Admin.Affiliate.UpdateUserSettings)
-			users.DELETE("/:user_id", h.Admin.Affiliate.ClearUserSettings)
-		}
 	}
 }

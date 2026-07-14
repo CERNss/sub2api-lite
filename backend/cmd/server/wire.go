@@ -13,7 +13,6 @@ import (
 	"github.com/CERNss/sub2api-lite/ent"
 	"github.com/CERNss/sub2api-lite/internal/config"
 	"github.com/CERNss/sub2api-lite/internal/handler"
-	"github.com/CERNss/sub2api-lite/internal/payment"
 	"github.com/CERNss/sub2api-lite/internal/repository"
 	"github.com/CERNss/sub2api-lite/internal/server"
 	"github.com/CERNss/sub2api-lite/internal/server/middleware"
@@ -36,7 +35,6 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 		// Business layer ProviderSets
 		repository.ProviderSet,
 		service.ProviderSet,
-		payment.ProviderSet,
 		middleware.ProviderSet,
 		handler.ProviderSet,
 
@@ -97,7 +95,6 @@ func provideCleanup(
 	openAIGateway *service.OpenAIGatewayService,
 	scheduledTestRunner *service.ScheduledTestRunnerService,
 	backupSvc *service.BackupService,
-	paymentOrderExpiry *service.PaymentOrderExpiryService,
 	channelMonitorRunner *service.ChannelMonitorRunner,
 	quotaFlusher *service.UserPlatformQuotaUsageFlusher,
 ) func() {
@@ -237,12 +234,6 @@ func provideCleanup(
 			{"BackupService", func() error {
 				if backupSvc != nil {
 					backupSvc.Stop()
-				}
-				return nil
-			}},
-			{"PaymentOrderExpiryService", func() error {
-				if paymentOrderExpiry != nil {
-					paymentOrderExpiry.Stop()
 				}
 				return nil
 			}},

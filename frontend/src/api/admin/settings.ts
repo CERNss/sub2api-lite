@@ -366,7 +366,6 @@ export interface SystemSettings {
   registration_enabled: boolean;
   email_verify_enabled: boolean;
   registration_email_suffix_whitelist: string[];
-  promo_code_enabled: boolean;
   password_reset_enabled: boolean;
   frontend_url: string;
   invitation_code_enabled: boolean;
@@ -378,10 +377,6 @@ export interface SystemSettings {
   login_agreement_documents: LoginAgreementDocument[];
   // Default settings
   default_balance: number;
-  affiliate_rebate_rate: number;
-  affiliate_rebate_freeze_hours: number;
-  affiliate_rebate_duration_days: number;
-  affiliate_rebate_per_invitee_cap: number;
   default_concurrency: number;
   default_user_rpm_limit: number;
   default_subscriptions: DefaultSubscriptionSetting[];
@@ -574,37 +569,12 @@ export interface SystemSettings {
   web_search_emulation_enabled?: boolean;
 
   // Payment configuration
-  payment_enabled: boolean;
   risk_control_enabled: boolean;
 
   // Cyber session block
   cyber_session_block_enabled: boolean;
   cyber_session_block_ttl_seconds: number;
 
-  payment_min_amount: number;
-  payment_max_amount: number;
-  payment_daily_limit: number;
-  payment_order_timeout_minutes: number;
-  payment_max_pending_orders: number;
-  payment_enabled_types: string[];
-  payment_balance_disabled: boolean;
-  payment_balance_recharge_multiplier: number;
-  payment_recharge_fee_rate: number;
-  payment_load_balance_strategy: string;
-  payment_product_name_prefix: string;
-  payment_product_name_suffix: string;
-  payment_help_image_url: string;
-  payment_help_text: string;
-  payment_cancel_rate_limit_enabled: boolean;
-  payment_cancel_rate_limit_max: number;
-  payment_cancel_rate_limit_window: number;
-  payment_cancel_rate_limit_unit: string;
-  payment_cancel_rate_limit_window_mode: string;
-  payment_alipay_force_qrcode?: boolean;
-  payment_visible_method_alipay_source?: string;
-  payment_visible_method_wxpay_source?: string;
-  payment_visible_method_alipay_enabled?: boolean;
-  payment_visible_method_wxpay_enabled?: boolean;
   openai_advanced_scheduler_enabled?: boolean;
 
   // 余额、订阅到期与账号限额通知
@@ -623,7 +593,6 @@ export interface SystemSettings {
   available_channels_enabled: boolean;
 
   // Affiliate (邀请返利) feature switch
-  affiliate_enabled: boolean;
 
   // OpenAI fast/flex policy
   openai_fast_policy_settings?: OpenAIFastPolicySettings;
@@ -636,7 +605,6 @@ export interface UpdateSettingsRequest {
   registration_enabled?: boolean;
   email_verify_enabled?: boolean;
   registration_email_suffix_whitelist?: string[];
-  promo_code_enabled?: boolean;
   password_reset_enabled?: boolean;
   frontend_url?: string;
   invitation_code_enabled?: boolean;
@@ -646,10 +614,6 @@ export interface UpdateSettingsRequest {
   login_agreement_updated_at?: string;
   login_agreement_documents?: LoginAgreementDocument[];
   default_balance?: number;
-  affiliate_rebate_rate?: number;
-  affiliate_rebate_freeze_hours?: number;
-  affiliate_rebate_duration_days?: number;
-  affiliate_rebate_per_invitee_cap?: number;
   default_concurrency?: number;
   default_user_rpm_limit?: number;
   default_subscriptions?: DefaultSubscriptionSetting[];
@@ -817,37 +781,12 @@ export interface UpdateSettingsRequest {
   openai_codex_user_agent?: string;
   openai_allow_claude_code_codex_plugin?: boolean;
   // Payment configuration
-  payment_enabled?: boolean;
   risk_control_enabled?: boolean;
 
   // Cyber session block
   cyber_session_block_enabled?: boolean;
   cyber_session_block_ttl_seconds?: number;
 
-  payment_min_amount?: number;
-  payment_max_amount?: number;
-  payment_daily_limit?: number;
-  payment_order_timeout_minutes?: number;
-  payment_max_pending_orders?: number;
-  payment_enabled_types?: string[];
-  payment_balance_disabled?: boolean;
-  payment_balance_recharge_multiplier?: number;
-  payment_recharge_fee_rate?: number;
-  payment_load_balance_strategy?: string;
-  payment_product_name_prefix?: string;
-  payment_product_name_suffix?: string;
-  payment_help_image_url?: string;
-  payment_help_text?: string;
-  payment_cancel_rate_limit_enabled?: boolean;
-  payment_cancel_rate_limit_max?: number;
-  payment_cancel_rate_limit_window?: number;
-  payment_cancel_rate_limit_unit?: string;
-  payment_cancel_rate_limit_window_mode?: string;
-  payment_alipay_force_qrcode?: boolean;
-  payment_visible_method_alipay_source?: string;
-  payment_visible_method_wxpay_source?: string;
-  payment_visible_method_alipay_enabled?: boolean;
-  payment_visible_method_wxpay_enabled?: boolean;
   openai_advanced_scheduler_enabled?: boolean;
   // 余额、订阅到期与账号限额通知
   balance_low_notify_enabled?: boolean;
@@ -865,7 +804,6 @@ export interface UpdateSettingsRequest {
   available_channels_enabled?: boolean;
 
   // Affiliate (邀请返利) feature switch
-  affiliate_enabled?: boolean;
 
   // OpenAI fast/flex policy
   openai_fast_policy_settings?: OpenAIFastPolicySettings;

@@ -46,11 +46,7 @@ describe('AppSidebar backend-mode (develop-lite) menu hiding', () => {
     const gatedPaths = [
       '/admin/channels',
       '/admin/subscriptions',
-      '/admin/announcements',
-      '/admin/redeem',
-      '/admin/promo-codes',
       '/subscriptions',
-      '/redeem',
     ]
     for (const p of gatedPaths) {
       const start = componentSource.indexOf(`path: '${p}',`)

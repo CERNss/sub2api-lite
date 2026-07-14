@@ -10,8 +10,6 @@ import (
 	"github.com/CERNss/sub2api-lite/ent"
 	"github.com/CERNss/sub2api-lite/ent/account"
 	"github.com/CERNss/sub2api-lite/ent/accountgroup"
-	"github.com/CERNss/sub2api-lite/ent/announcement"
-	"github.com/CERNss/sub2api-lite/ent/announcementread"
 	"github.com/CERNss/sub2api-lite/ent/apikey"
 	"github.com/CERNss/sub2api-lite/ent/authidentity"
 	"github.com/CERNss/sub2api-lite/ent/authidentitychannel"
@@ -23,13 +21,8 @@ import (
 	"github.com/CERNss/sub2api-lite/ent/group"
 	"github.com/CERNss/sub2api-lite/ent/idempotencyrecord"
 	"github.com/CERNss/sub2api-lite/ent/identityadoptiondecision"
-	"github.com/CERNss/sub2api-lite/ent/paymentauditlog"
-	"github.com/CERNss/sub2api-lite/ent/paymentorder"
-	"github.com/CERNss/sub2api-lite/ent/paymentproviderinstance"
 	"github.com/CERNss/sub2api-lite/ent/pendingauthsession"
 	"github.com/CERNss/sub2api-lite/ent/predicate"
-	"github.com/CERNss/sub2api-lite/ent/promocode"
-	"github.com/CERNss/sub2api-lite/ent/promocodeusage"
 	"github.com/CERNss/sub2api-lite/ent/proxy"
 	"github.com/CERNss/sub2api-lite/ent/redeemcode"
 	"github.com/CERNss/sub2api-lite/ent/securitysecret"
@@ -181,60 +174,6 @@ func (f TraverseAccountGroup) Traverse(ctx context.Context, q ent.Query) error {
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *ent.AccountGroupQuery", q)
-}
-
-// The AnnouncementFunc type is an adapter to allow the use of ordinary function as a Querier.
-type AnnouncementFunc func(context.Context, *ent.AnnouncementQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f AnnouncementFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.AnnouncementQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AnnouncementQuery", q)
-}
-
-// The TraverseAnnouncement type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseAnnouncement func(context.Context, *ent.AnnouncementQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseAnnouncement) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseAnnouncement) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.AnnouncementQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.AnnouncementQuery", q)
-}
-
-// The AnnouncementReadFunc type is an adapter to allow the use of ordinary function as a Querier.
-type AnnouncementReadFunc func(context.Context, *ent.AnnouncementReadQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f AnnouncementReadFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.AnnouncementReadQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AnnouncementReadQuery", q)
-}
-
-// The TraverseAnnouncementRead type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseAnnouncementRead func(context.Context, *ent.AnnouncementReadQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseAnnouncementRead) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseAnnouncementRead) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.AnnouncementReadQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.AnnouncementReadQuery", q)
 }
 
 // The AuthIdentityFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -507,87 +446,6 @@ func (f TraverseIdentityAdoptionDecision) Traverse(ctx context.Context, q ent.Qu
 	return fmt.Errorf("unexpected query type %T. expect *ent.IdentityAdoptionDecisionQuery", q)
 }
 
-// The PaymentAuditLogFunc type is an adapter to allow the use of ordinary function as a Querier.
-type PaymentAuditLogFunc func(context.Context, *ent.PaymentAuditLogQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f PaymentAuditLogFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.PaymentAuditLogQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PaymentAuditLogQuery", q)
-}
-
-// The TraversePaymentAuditLog type is an adapter to allow the use of ordinary function as Traverser.
-type TraversePaymentAuditLog func(context.Context, *ent.PaymentAuditLogQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraversePaymentAuditLog) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraversePaymentAuditLog) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.PaymentAuditLogQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.PaymentAuditLogQuery", q)
-}
-
-// The PaymentOrderFunc type is an adapter to allow the use of ordinary function as a Querier.
-type PaymentOrderFunc func(context.Context, *ent.PaymentOrderQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f PaymentOrderFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.PaymentOrderQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PaymentOrderQuery", q)
-}
-
-// The TraversePaymentOrder type is an adapter to allow the use of ordinary function as Traverser.
-type TraversePaymentOrder func(context.Context, *ent.PaymentOrderQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraversePaymentOrder) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraversePaymentOrder) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.PaymentOrderQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.PaymentOrderQuery", q)
-}
-
-// The PaymentProviderInstanceFunc type is an adapter to allow the use of ordinary function as a Querier.
-type PaymentProviderInstanceFunc func(context.Context, *ent.PaymentProviderInstanceQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f PaymentProviderInstanceFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.PaymentProviderInstanceQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PaymentProviderInstanceQuery", q)
-}
-
-// The TraversePaymentProviderInstance type is an adapter to allow the use of ordinary function as Traverser.
-type TraversePaymentProviderInstance func(context.Context, *ent.PaymentProviderInstanceQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraversePaymentProviderInstance) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraversePaymentProviderInstance) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.PaymentProviderInstanceQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.PaymentProviderInstanceQuery", q)
-}
-
 // The PendingAuthSessionFunc type is an adapter to allow the use of ordinary function as a Querier.
 type PendingAuthSessionFunc func(context.Context, *ent.PendingAuthSessionQuery) (ent.Value, error)
 
@@ -613,60 +471,6 @@ func (f TraversePendingAuthSession) Traverse(ctx context.Context, q ent.Query) e
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *ent.PendingAuthSessionQuery", q)
-}
-
-// The PromoCodeFunc type is an adapter to allow the use of ordinary function as a Querier.
-type PromoCodeFunc func(context.Context, *ent.PromoCodeQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f PromoCodeFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.PromoCodeQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PromoCodeQuery", q)
-}
-
-// The TraversePromoCode type is an adapter to allow the use of ordinary function as Traverser.
-type TraversePromoCode func(context.Context, *ent.PromoCodeQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraversePromoCode) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraversePromoCode) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.PromoCodeQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.PromoCodeQuery", q)
-}
-
-// The PromoCodeUsageFunc type is an adapter to allow the use of ordinary function as a Querier.
-type PromoCodeUsageFunc func(context.Context, *ent.PromoCodeUsageQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f PromoCodeUsageFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.PromoCodeUsageQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PromoCodeUsageQuery", q)
-}
-
-// The TraversePromoCodeUsage type is an adapter to allow the use of ordinary function as Traverser.
-type TraversePromoCodeUsage func(context.Context, *ent.PromoCodeUsageQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraversePromoCodeUsage) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraversePromoCodeUsage) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.PromoCodeUsageQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.PromoCodeUsageQuery", q)
 }
 
 // The ProxyFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -1056,10 +860,6 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.AccountQuery, predicate.Account, account.OrderOption]{typ: ent.TypeAccount, tq: q}, nil
 	case *ent.AccountGroupQuery:
 		return &query[*ent.AccountGroupQuery, predicate.AccountGroup, accountgroup.OrderOption]{typ: ent.TypeAccountGroup, tq: q}, nil
-	case *ent.AnnouncementQuery:
-		return &query[*ent.AnnouncementQuery, predicate.Announcement, announcement.OrderOption]{typ: ent.TypeAnnouncement, tq: q}, nil
-	case *ent.AnnouncementReadQuery:
-		return &query[*ent.AnnouncementReadQuery, predicate.AnnouncementRead, announcementread.OrderOption]{typ: ent.TypeAnnouncementRead, tq: q}, nil
 	case *ent.AuthIdentityQuery:
 		return &query[*ent.AuthIdentityQuery, predicate.AuthIdentity, authidentity.OrderOption]{typ: ent.TypeAuthIdentity, tq: q}, nil
 	case *ent.AuthIdentityChannelQuery:
@@ -1080,18 +880,8 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.IdempotencyRecordQuery, predicate.IdempotencyRecord, idempotencyrecord.OrderOption]{typ: ent.TypeIdempotencyRecord, tq: q}, nil
 	case *ent.IdentityAdoptionDecisionQuery:
 		return &query[*ent.IdentityAdoptionDecisionQuery, predicate.IdentityAdoptionDecision, identityadoptiondecision.OrderOption]{typ: ent.TypeIdentityAdoptionDecision, tq: q}, nil
-	case *ent.PaymentAuditLogQuery:
-		return &query[*ent.PaymentAuditLogQuery, predicate.PaymentAuditLog, paymentauditlog.OrderOption]{typ: ent.TypePaymentAuditLog, tq: q}, nil
-	case *ent.PaymentOrderQuery:
-		return &query[*ent.PaymentOrderQuery, predicate.PaymentOrder, paymentorder.OrderOption]{typ: ent.TypePaymentOrder, tq: q}, nil
-	case *ent.PaymentProviderInstanceQuery:
-		return &query[*ent.PaymentProviderInstanceQuery, predicate.PaymentProviderInstance, paymentproviderinstance.OrderOption]{typ: ent.TypePaymentProviderInstance, tq: q}, nil
 	case *ent.PendingAuthSessionQuery:
 		return &query[*ent.PendingAuthSessionQuery, predicate.PendingAuthSession, pendingauthsession.OrderOption]{typ: ent.TypePendingAuthSession, tq: q}, nil
-	case *ent.PromoCodeQuery:
-		return &query[*ent.PromoCodeQuery, predicate.PromoCode, promocode.OrderOption]{typ: ent.TypePromoCode, tq: q}, nil
-	case *ent.PromoCodeUsageQuery:
-		return &query[*ent.PromoCodeUsageQuery, predicate.PromoCodeUsage, promocodeusage.OrderOption]{typ: ent.TypePromoCodeUsage, tq: q}, nil
 	case *ent.ProxyQuery:
 		return &query[*ent.ProxyQuery, predicate.Proxy, proxy.OrderOption]{typ: ent.TypeProxy, tq: q}, nil
 	case *ent.RedeemCodeQuery:

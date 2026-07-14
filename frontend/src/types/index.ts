@@ -1951,9 +1951,6 @@ export interface UpdateScheduledTestPlanRequest {
   auto_recover?: boolean
 }
 
-// Payment types
-export type { SubscriptionPlan, PaymentOrder, CheckoutInfoResponse } from './payment'
-
 export type {
   PlatformQuotaItem,
   PlatformQuotaUpdateItem,

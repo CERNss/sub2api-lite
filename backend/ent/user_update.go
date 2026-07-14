@@ -11,14 +11,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/CERNss/sub2api-lite/ent/announcementread"
 	"github.com/CERNss/sub2api-lite/ent/apikey"
 	"github.com/CERNss/sub2api-lite/ent/authidentity"
 	"github.com/CERNss/sub2api-lite/ent/group"
-	"github.com/CERNss/sub2api-lite/ent/paymentorder"
 	"github.com/CERNss/sub2api-lite/ent/pendingauthsession"
 	"github.com/CERNss/sub2api-lite/ent/predicate"
-	"github.com/CERNss/sub2api-lite/ent/promocodeusage"
 	"github.com/CERNss/sub2api-lite/ent/redeemcode"
 	"github.com/CERNss/sub2api-lite/ent/usagelog"
 	"github.com/CERNss/sub2api-lite/ent/user"
@@ -471,21 +468,6 @@ func (_u *UserUpdate) AddAssignedSubscriptions(v ...*UserSubscription) *UserUpda
 	return _u.AddAssignedSubscriptionIDs(ids...)
 }
 
-// AddAnnouncementReadIDs adds the "announcement_reads" edge to the AnnouncementRead entity by IDs.
-func (_u *UserUpdate) AddAnnouncementReadIDs(ids ...int64) *UserUpdate {
-	_u.mutation.AddAnnouncementReadIDs(ids...)
-	return _u
-}
-
-// AddAnnouncementReads adds the "announcement_reads" edges to the AnnouncementRead entity.
-func (_u *UserUpdate) AddAnnouncementReads(v ...*AnnouncementRead) *UserUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddAnnouncementReadIDs(ids...)
-}
-
 // AddAllowedGroupIDs adds the "allowed_groups" edge to the Group entity by IDs.
 func (_u *UserUpdate) AddAllowedGroupIDs(ids ...int64) *UserUpdate {
 	_u.mutation.AddAllowedGroupIDs(ids...)
@@ -529,36 +511,6 @@ func (_u *UserUpdate) AddAttributeValues(v ...*UserAttributeValue) *UserUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.AddAttributeValueIDs(ids...)
-}
-
-// AddPromoCodeUsageIDs adds the "promo_code_usages" edge to the PromoCodeUsage entity by IDs.
-func (_u *UserUpdate) AddPromoCodeUsageIDs(ids ...int64) *UserUpdate {
-	_u.mutation.AddPromoCodeUsageIDs(ids...)
-	return _u
-}
-
-// AddPromoCodeUsages adds the "promo_code_usages" edges to the PromoCodeUsage entity.
-func (_u *UserUpdate) AddPromoCodeUsages(v ...*PromoCodeUsage) *UserUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddPromoCodeUsageIDs(ids...)
-}
-
-// AddPaymentOrderIDs adds the "payment_orders" edge to the PaymentOrder entity by IDs.
-func (_u *UserUpdate) AddPaymentOrderIDs(ids ...int64) *UserUpdate {
-	_u.mutation.AddPaymentOrderIDs(ids...)
-	return _u
-}
-
-// AddPaymentOrders adds the "payment_orders" edges to the PaymentOrder entity.
-func (_u *UserUpdate) AddPaymentOrders(v ...*PaymentOrder) *UserUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddPaymentOrderIDs(ids...)
 }
 
 // AddAuthIdentityIDs adds the "auth_identities" edge to the AuthIdentity entity by IDs.
@@ -695,27 +647,6 @@ func (_u *UserUpdate) RemoveAssignedSubscriptions(v ...*UserSubscription) *UserU
 	return _u.RemoveAssignedSubscriptionIDs(ids...)
 }
 
-// ClearAnnouncementReads clears all "announcement_reads" edges to the AnnouncementRead entity.
-func (_u *UserUpdate) ClearAnnouncementReads() *UserUpdate {
-	_u.mutation.ClearAnnouncementReads()
-	return _u
-}
-
-// RemoveAnnouncementReadIDs removes the "announcement_reads" edge to AnnouncementRead entities by IDs.
-func (_u *UserUpdate) RemoveAnnouncementReadIDs(ids ...int64) *UserUpdate {
-	_u.mutation.RemoveAnnouncementReadIDs(ids...)
-	return _u
-}
-
-// RemoveAnnouncementReads removes "announcement_reads" edges to AnnouncementRead entities.
-func (_u *UserUpdate) RemoveAnnouncementReads(v ...*AnnouncementRead) *UserUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveAnnouncementReadIDs(ids...)
-}
-
 // ClearAllowedGroups clears all "allowed_groups" edges to the Group entity.
 func (_u *UserUpdate) ClearAllowedGroups() *UserUpdate {
 	_u.mutation.ClearAllowedGroups()
@@ -777,48 +708,6 @@ func (_u *UserUpdate) RemoveAttributeValues(v ...*UserAttributeValue) *UserUpdat
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveAttributeValueIDs(ids...)
-}
-
-// ClearPromoCodeUsages clears all "promo_code_usages" edges to the PromoCodeUsage entity.
-func (_u *UserUpdate) ClearPromoCodeUsages() *UserUpdate {
-	_u.mutation.ClearPromoCodeUsages()
-	return _u
-}
-
-// RemovePromoCodeUsageIDs removes the "promo_code_usages" edge to PromoCodeUsage entities by IDs.
-func (_u *UserUpdate) RemovePromoCodeUsageIDs(ids ...int64) *UserUpdate {
-	_u.mutation.RemovePromoCodeUsageIDs(ids...)
-	return _u
-}
-
-// RemovePromoCodeUsages removes "promo_code_usages" edges to PromoCodeUsage entities.
-func (_u *UserUpdate) RemovePromoCodeUsages(v ...*PromoCodeUsage) *UserUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemovePromoCodeUsageIDs(ids...)
-}
-
-// ClearPaymentOrders clears all "payment_orders" edges to the PaymentOrder entity.
-func (_u *UserUpdate) ClearPaymentOrders() *UserUpdate {
-	_u.mutation.ClearPaymentOrders()
-	return _u
-}
-
-// RemovePaymentOrderIDs removes the "payment_orders" edge to PaymentOrder entities by IDs.
-func (_u *UserUpdate) RemovePaymentOrderIDs(ids ...int64) *UserUpdate {
-	_u.mutation.RemovePaymentOrderIDs(ids...)
-	return _u
-}
-
-// RemovePaymentOrders removes "payment_orders" edges to PaymentOrder entities.
-func (_u *UserUpdate) RemovePaymentOrders(v ...*PaymentOrder) *UserUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemovePaymentOrderIDs(ids...)
 }
 
 // ClearAuthIdentities clears all "auth_identities" edges to the AuthIdentity entity.
@@ -1252,51 +1141,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.AnnouncementReadsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.AnnouncementReadsTable,
-			Columns: []string{user.AnnouncementReadsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(announcementread.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedAnnouncementReadsIDs(); len(nodes) > 0 && !_u.mutation.AnnouncementReadsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.AnnouncementReadsTable,
-			Columns: []string{user.AnnouncementReadsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(announcementread.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.AnnouncementReadsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.AnnouncementReadsTable,
-			Columns: []string{user.AnnouncementReadsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(announcementread.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if _u.mutation.AllowedGroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -1437,96 +1281,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userattributevalue.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.PromoCodeUsagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PromoCodeUsagesTable,
-			Columns: []string{user.PromoCodeUsagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(promocodeusage.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedPromoCodeUsagesIDs(); len(nodes) > 0 && !_u.mutation.PromoCodeUsagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PromoCodeUsagesTable,
-			Columns: []string{user.PromoCodeUsagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(promocodeusage.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.PromoCodeUsagesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PromoCodeUsagesTable,
-			Columns: []string{user.PromoCodeUsagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(promocodeusage.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.PaymentOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PaymentOrdersTable,
-			Columns: []string{user.PaymentOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(paymentorder.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedPaymentOrdersIDs(); len(nodes) > 0 && !_u.mutation.PaymentOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PaymentOrdersTable,
-			Columns: []string{user.PaymentOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(paymentorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.PaymentOrdersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PaymentOrdersTable,
-			Columns: []string{user.PaymentOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(paymentorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2120,21 +1874,6 @@ func (_u *UserUpdateOne) AddAssignedSubscriptions(v ...*UserSubscription) *UserU
 	return _u.AddAssignedSubscriptionIDs(ids...)
 }
 
-// AddAnnouncementReadIDs adds the "announcement_reads" edge to the AnnouncementRead entity by IDs.
-func (_u *UserUpdateOne) AddAnnouncementReadIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.AddAnnouncementReadIDs(ids...)
-	return _u
-}
-
-// AddAnnouncementReads adds the "announcement_reads" edges to the AnnouncementRead entity.
-func (_u *UserUpdateOne) AddAnnouncementReads(v ...*AnnouncementRead) *UserUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddAnnouncementReadIDs(ids...)
-}
-
 // AddAllowedGroupIDs adds the "allowed_groups" edge to the Group entity by IDs.
 func (_u *UserUpdateOne) AddAllowedGroupIDs(ids ...int64) *UserUpdateOne {
 	_u.mutation.AddAllowedGroupIDs(ids...)
@@ -2178,36 +1917,6 @@ func (_u *UserUpdateOne) AddAttributeValues(v ...*UserAttributeValue) *UserUpdat
 		ids[i] = v[i].ID
 	}
 	return _u.AddAttributeValueIDs(ids...)
-}
-
-// AddPromoCodeUsageIDs adds the "promo_code_usages" edge to the PromoCodeUsage entity by IDs.
-func (_u *UserUpdateOne) AddPromoCodeUsageIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.AddPromoCodeUsageIDs(ids...)
-	return _u
-}
-
-// AddPromoCodeUsages adds the "promo_code_usages" edges to the PromoCodeUsage entity.
-func (_u *UserUpdateOne) AddPromoCodeUsages(v ...*PromoCodeUsage) *UserUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddPromoCodeUsageIDs(ids...)
-}
-
-// AddPaymentOrderIDs adds the "payment_orders" edge to the PaymentOrder entity by IDs.
-func (_u *UserUpdateOne) AddPaymentOrderIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.AddPaymentOrderIDs(ids...)
-	return _u
-}
-
-// AddPaymentOrders adds the "payment_orders" edges to the PaymentOrder entity.
-func (_u *UserUpdateOne) AddPaymentOrders(v ...*PaymentOrder) *UserUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddPaymentOrderIDs(ids...)
 }
 
 // AddAuthIdentityIDs adds the "auth_identities" edge to the AuthIdentity entity by IDs.
@@ -2344,27 +2053,6 @@ func (_u *UserUpdateOne) RemoveAssignedSubscriptions(v ...*UserSubscription) *Us
 	return _u.RemoveAssignedSubscriptionIDs(ids...)
 }
 
-// ClearAnnouncementReads clears all "announcement_reads" edges to the AnnouncementRead entity.
-func (_u *UserUpdateOne) ClearAnnouncementReads() *UserUpdateOne {
-	_u.mutation.ClearAnnouncementReads()
-	return _u
-}
-
-// RemoveAnnouncementReadIDs removes the "announcement_reads" edge to AnnouncementRead entities by IDs.
-func (_u *UserUpdateOne) RemoveAnnouncementReadIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.RemoveAnnouncementReadIDs(ids...)
-	return _u
-}
-
-// RemoveAnnouncementReads removes "announcement_reads" edges to AnnouncementRead entities.
-func (_u *UserUpdateOne) RemoveAnnouncementReads(v ...*AnnouncementRead) *UserUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveAnnouncementReadIDs(ids...)
-}
-
 // ClearAllowedGroups clears all "allowed_groups" edges to the Group entity.
 func (_u *UserUpdateOne) ClearAllowedGroups() *UserUpdateOne {
 	_u.mutation.ClearAllowedGroups()
@@ -2426,48 +2114,6 @@ func (_u *UserUpdateOne) RemoveAttributeValues(v ...*UserAttributeValue) *UserUp
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveAttributeValueIDs(ids...)
-}
-
-// ClearPromoCodeUsages clears all "promo_code_usages" edges to the PromoCodeUsage entity.
-func (_u *UserUpdateOne) ClearPromoCodeUsages() *UserUpdateOne {
-	_u.mutation.ClearPromoCodeUsages()
-	return _u
-}
-
-// RemovePromoCodeUsageIDs removes the "promo_code_usages" edge to PromoCodeUsage entities by IDs.
-func (_u *UserUpdateOne) RemovePromoCodeUsageIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.RemovePromoCodeUsageIDs(ids...)
-	return _u
-}
-
-// RemovePromoCodeUsages removes "promo_code_usages" edges to PromoCodeUsage entities.
-func (_u *UserUpdateOne) RemovePromoCodeUsages(v ...*PromoCodeUsage) *UserUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemovePromoCodeUsageIDs(ids...)
-}
-
-// ClearPaymentOrders clears all "payment_orders" edges to the PaymentOrder entity.
-func (_u *UserUpdateOne) ClearPaymentOrders() *UserUpdateOne {
-	_u.mutation.ClearPaymentOrders()
-	return _u
-}
-
-// RemovePaymentOrderIDs removes the "payment_orders" edge to PaymentOrder entities by IDs.
-func (_u *UserUpdateOne) RemovePaymentOrderIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.RemovePaymentOrderIDs(ids...)
-	return _u
-}
-
-// RemovePaymentOrders removes "payment_orders" edges to PaymentOrder entities.
-func (_u *UserUpdateOne) RemovePaymentOrders(v ...*PaymentOrder) *UserUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemovePaymentOrderIDs(ids...)
 }
 
 // ClearAuthIdentities clears all "auth_identities" edges to the AuthIdentity entity.
@@ -2931,51 +2577,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.AnnouncementReadsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.AnnouncementReadsTable,
-			Columns: []string{user.AnnouncementReadsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(announcementread.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedAnnouncementReadsIDs(); len(nodes) > 0 && !_u.mutation.AnnouncementReadsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.AnnouncementReadsTable,
-			Columns: []string{user.AnnouncementReadsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(announcementread.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.AnnouncementReadsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.AnnouncementReadsTable,
-			Columns: []string{user.AnnouncementReadsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(announcementread.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if _u.mutation.AllowedGroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -3116,96 +2717,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userattributevalue.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.PromoCodeUsagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PromoCodeUsagesTable,
-			Columns: []string{user.PromoCodeUsagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(promocodeusage.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedPromoCodeUsagesIDs(); len(nodes) > 0 && !_u.mutation.PromoCodeUsagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PromoCodeUsagesTable,
-			Columns: []string{user.PromoCodeUsagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(promocodeusage.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.PromoCodeUsagesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PromoCodeUsagesTable,
-			Columns: []string{user.PromoCodeUsagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(promocodeusage.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.PaymentOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PaymentOrdersTable,
-			Columns: []string{user.PaymentOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(paymentorder.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedPaymentOrdersIDs(); len(nodes) > 0 && !_u.mutation.PaymentOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PaymentOrdersTable,
-			Columns: []string{user.PaymentOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(paymentorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.PaymentOrdersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.PaymentOrdersTable,
-			Columns: []string{user.PaymentOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(paymentorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
