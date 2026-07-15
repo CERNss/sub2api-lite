@@ -1,14 +1,14 @@
 #!/bin/bash
 # =============================================================================
-# Sub2API Docker Deployment Preparation Script
+# Sub2API Lite Docker Deployment Preparation Script
 # =============================================================================
-# This script prepares deployment files for Sub2API:
+# This script prepares deployment files for Sub2API Lite:
 #   - Downloads docker-compose.local.yml and .env.example
 #   - Generates secure secrets (JWT_SECRET, TOTP_ENCRYPTION_KEY, POSTGRES_PASSWORD)
 #   - Creates necessary data directories
 #
 # After running this script, you can start services with:
-#   docker-compose up -d
+#   docker compose up -d
 # =============================================================================
 
 set -e
@@ -54,7 +54,7 @@ command_exists() {
 main() {
     echo ""
     echo "=========================================="
-    echo "  Sub2API Deployment Preparation"
+    echo "  Sub2API Lite Deployment Preparation"
     echo "=========================================="
     echo ""
 
@@ -67,7 +67,9 @@ main() {
     # Check if deployment already exists
     if [ -f "docker-compose.yml" ] && [ -f ".env" ]; then
         print_warning "Deployment files already exist in current directory."
-        read -p "Overwrite existing files? (y/N): " -r
+        # Read from /dev/tty so the prompt also works when piped (curl | bash);
+        # default to "no" when no terminal is available.
+        read -p "Overwrite existing files? (y/N): " -r </dev/tty || REPLY=""
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             print_info "Cancelled."
@@ -121,9 +123,9 @@ main() {
         sed -i '' "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/" .env
     fi
 
-    # Create data directories
+    # Create data directories (all persistent data lives under ./data)
     print_info "Creating data directories..."
-    mkdir -p data postgres_data redis_data
+    mkdir -p data/sub2api data/postgres data/redis
     print_success "Created data directories"
 
     # Set secure permissions for .env file (readable/writable only by owner)
@@ -147,17 +149,17 @@ main() {
     echo "  docker-compose.yml        - Docker Compose configuration"
     echo "  .env                      - Environment variables (generated secrets)"
     echo "  .env.example              - Example template (for reference)"
-    echo "  data/                     - Application data (will be created on first run)"
-    echo "  postgres_data/            - PostgreSQL data"
-    echo "  redis_data/               - Redis data"
+    echo "  data/sub2api/             - Application data (config.yaml auto-generated here)"
+    echo "  data/postgres/            - PostgreSQL data"
+    echo "  data/redis/               - Redis data"
     echo ""
     echo "Next steps:"
     echo "  1. (Optional) Edit .env to customize configuration"
     echo "  2. Start services:"
-    echo "     docker-compose up -d"
+    echo "     docker compose up -d"
     echo ""
     echo "  3. View logs:"
-    echo "     docker-compose logs -f sub2api"
+    echo "     docker compose logs -f sub2api"
     echo ""
     echo "  4. Access Web UI:"
     echo "     http://localhost:8080"

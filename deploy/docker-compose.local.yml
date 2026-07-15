@@ -5,18 +5,23 @@
 # volumes, making it easy to migrate the entire deployment by simply copying
 # the deploy directory.
 #
+# All persistent data lives under ./data:
+#   ./data/sub2api   - Application data (config.yaml auto-generated here)
+#   ./data/postgres  - PostgreSQL data
+#   ./data/redis     - Redis data
+#
 # Quick Start:
 #   1. Copy .env.example to .env and configure
-#   2. mkdir -p data postgres_data redis_data
-#   3. docker-compose -f docker-compose.local.yml up -d
-#   4. Check logs: docker-compose -f docker-compose.local.yml logs -f sub2api
+#   2. mkdir -p data/sub2api data/postgres data/redis
+#   3. docker compose -f docker-compose.local.yml up -d
+#   4. Check logs: docker compose -f docker-compose.local.yml logs -f sub2api
 #   5. Access: http://localhost:8080
 #
 # Migration to New Server:
-#   1. docker-compose -f docker-compose.local.yml down
+#   1. docker compose -f docker-compose.local.yml down
 #   2. tar czf sub2api-deploy.tar.gz deploy/
 #   3. Transfer to new server and extract
-#   4. docker-compose -f docker-compose.local.yml up -d
+#   4. docker compose -f docker-compose.local.yml up -d
 # =============================================================================
 
 services:
@@ -35,7 +40,7 @@ services:
       - "${BIND_HOST:-0.0.0.0}:${SERVER_PORT:-8080}:8080"
     volumes:
       # Local directory mapping for easy migration
-      - ./data:/app/data:Z
+      - ./data/sub2api:/app/data:Z
       # Optional: Mount custom config.yaml (uncomment and create the file first)
       # Copy config.example.yaml to config.yaml, modify it, then uncomment:
       # - ./config.yaml:/app/data/config.yaml
@@ -196,7 +201,7 @@ services:
         hard: 100000
     volumes:
       # Local directory mapping for easy migration
-      - ./postgres_data:/var/lib/postgresql/data:Z
+      - ./data/postgres:/var/lib/postgresql/data:Z
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-sub2api}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
@@ -227,7 +232,7 @@ services:
         hard: 100000
     volumes:
       # Local directory mapping for easy migration
-      - ./redis_data:/data:Z
+      - ./data/redis:/data:Z
     command: >
         sh -c '
           redis-server
