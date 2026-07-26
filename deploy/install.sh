@@ -32,10 +32,10 @@ NC='\033[0m' # No Color
 
 # Configuration
 GITHUB_REPO="CERNss/sub2api-lite"
-INSTALL_DIR="/opt/sub2api"
-SERVICE_NAME="sub2api"
+INSTALL_DIR="/opt/sub2api-lite"
+SERVICE_NAME="sub2api-lite"
 SERVICE_USER="sub2api"
-CONFIG_DIR="/etc/sub2api"
+CONFIG_DIR="/etc/sub2api-lite"
 
 # Server configuration (will be set by user)
 SERVER_HOST="0.0.0.0"
@@ -667,7 +667,7 @@ install_service() {
     print_info "$(msg 'installing_service')"
 
     # Create service file with configured host and port
-    cat > /etc/systemd/system/sub2api.service << EOF
+    cat > /etc/systemd/system/sub2api-lite.service << EOF
 [Unit]
 Description=Sub2API Lite - AI API Gateway (subscription to API)
 Documentation=https://github.com/CERNss/sub2api-lite
@@ -678,20 +678,20 @@ Wants=postgresql.service redis.service
 Type=simple
 User=sub2api
 Group=sub2api
-WorkingDirectory=/opt/sub2api
-ExecStart=/opt/sub2api/sub2api
+WorkingDirectory=/opt/sub2api-lite
+ExecStart=/opt/sub2api-lite/sub2api
 Restart=always
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=sub2api
+SyslogIdentifier=sub2api-lite
 
 # Security hardening
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
 PrivateTmp=true
-ReadWritePaths=/opt/sub2api
+ReadWritePaths=/opt/sub2api-lite
 
 # Environment - Server configuration
 Environment=GIN_MODE=release
@@ -740,12 +740,12 @@ get_public_ip() {
 start_service() {
     print_info "$(msg 'starting_service')"
 
-    if systemctl start sub2api; then
+    if systemctl start sub2api-lite; then
         print_success "$(msg 'service_started')"
         return 0
     else
         print_error "$(msg 'service_start_failed')"
-        print_info "sudo journalctl -u sub2api -n 50"
+        print_info "sudo journalctl -u sub2api-lite -n 50"
         return 1
     fi
 }
@@ -754,7 +754,7 @@ start_service() {
 enable_autostart() {
     print_info "$(msg 'enabling_autostart')"
 
-    if systemctl enable sub2api 2>/dev/null; then
+    if systemctl enable sub2api-lite 2>/dev/null; then
         print_success "$(msg 'autostart_enabled')"
         return 0
     else
@@ -795,17 +795,17 @@ print_completion() {
     echo "  $(msg 'useful_commands')"
     echo "=============================================="
     echo ""
-    echo "  $(msg 'cmd_status'):   sudo systemctl status sub2api"
-    echo "  $(msg 'cmd_logs'):     sudo journalctl -u sub2api -f"
-    echo "  $(msg 'cmd_restart'):  sudo systemctl restart sub2api"
-    echo "  $(msg 'cmd_stop'):     sudo systemctl stop sub2api"
+    echo "  $(msg 'cmd_status'):   sudo systemctl status sub2api-lite"
+    echo "  $(msg 'cmd_logs'):     sudo journalctl -u sub2api-lite -f"
+    echo "  $(msg 'cmd_restart'):  sudo systemctl restart sub2api-lite"
+    echo "  $(msg 'cmd_stop'):     sudo systemctl stop sub2api-lite"
     echo ""
     echo "=============================================="
 }
 
 # Upgrade function
 upgrade() {
-    # Check if Sub2API is installed
+    # Check if Sub2API Lite is installed
     if [ ! -f "$INSTALL_DIR/sub2api" ]; then
         print_error "$(msg 'not_installed')"
         print_info "$(msg 'fresh_install_hint'): $0 install"
@@ -819,9 +819,9 @@ upgrade() {
     print_info "$(msg 'current_version'): $CURRENT_VERSION"
 
     # Stop service
-    if systemctl is-active --quiet sub2api; then
+    if systemctl is-active --quiet sub2api-lite; then
         print_info "$(msg 'stopping_service')"
-        systemctl stop sub2api
+        systemctl stop sub2api-lite
     fi
 
     # Backup current binary
@@ -837,17 +837,17 @@ upgrade() {
 
     # Start service
     print_info "$(msg 'starting_service')"
-    systemctl start sub2api
+    systemctl start sub2api-lite
 
     print_success "$(msg 'upgrade_complete')"
 }
 
 # Install specific version (for upgrade or rollback)
-# Requires: Sub2API must already be installed
+# Requires: Sub2API Lite must already be installed
 install_version() {
     local target_version="$1"
 
-    # Check if Sub2API is installed
+    # Check if Sub2API Lite is installed
     if [ ! -f "$INSTALL_DIR/sub2api" ]; then
         print_error "$(msg 'not_installed')"
         print_info "$(msg 'fresh_install_hint'): $0 install -v $target_version"
@@ -871,9 +871,9 @@ install_version() {
     fi
 
     # Stop service if running
-    if systemctl is-active --quiet sub2api; then
+    if systemctl is-active --quiet sub2api-lite; then
         print_info "$(msg 'stopping_service')"
-        systemctl stop sub2api
+        systemctl stop sub2api-lite
     fi
 
     # Backup current binary (for potential recovery)
@@ -899,11 +899,11 @@ install_version() {
 
     # Start service
     print_info "$(msg 'starting_service')"
-    if systemctl start sub2api; then
+    if systemctl start sub2api-lite; then
         print_success "$(msg 'service_started')"
     else
         print_error "$(msg 'service_start_failed')"
-        print_info "sudo journalctl -u sub2api -n 50"
+        print_info "sudo journalctl -u sub2api-lite -n 50"
     fi
 
     # Print completion message
@@ -938,11 +938,11 @@ uninstall() {
     fi
 
     print_info "$(msg 'stopping_service')"
-    systemctl stop sub2api 2>/dev/null || true
-    systemctl disable sub2api 2>/dev/null || true
+    systemctl stop sub2api-lite 2>/dev/null || true
+    systemctl disable sub2api-lite 2>/dev/null || true
 
     print_info "$(msg 'removing_files')"
-    rm -f /etc/systemd/system/sub2api.service
+    rm -f /etc/systemd/system/sub2api-lite.service
     systemctl daemon-reload
 
     print_info "$(msg 'removing_install_dir')"

@@ -406,6 +406,7 @@ _待提交。_
 | Action 镜像化 | `.github/action-mirrors/**`、`tools/sync-action-mirrors.sh`、`tools/install-goreleaser.sh`、`tools/run-goreleaser-release.sh` | 几乎全新增 |
 | 默认运行参数 | `deploy/docker-compose*.yml`（与 #5 部分重叠） | 补丁 |
 | 文档分支 | `DEV_GUIDE.md`；`README*.md` 中**非 OpenSpec 功能段落**（如部署/构建说明） | 补丁 |
+| 品牌重塑 | 全局 `Sub2API` → `Sub2API Lite`（README/前端 title 与 i18n/后端 siteName 兜底/TOTP issuer/goreleaser release 名）；默认目录 `/opt/sub2api-lite`、`/etc/sub2api-lite`、`data/sub2api-lite`；systemd 单元 `sub2api-lite.service`；compose service/容器/网络/卷名加 `-lite`。**保留不改**：二进制与发布资产名 `sub2api_*`、OS/容器用户 `sub2api`、数据库名、合规声明短语、datamanagementd socket 路径 | 补丁（跨大量文件） |
 | CLA / License | `CLA.md`、`.github/workflows/cla.yml` | 已删除（CLA 流程仅对上游 `Wei-Shaw/sub2api` 生效，fork 不需要） |
 
 > 这一块文件数量大但大多是 `.github/action-mirrors/` 等"新增目录"，rebase 几乎不会冲突；真正需要看的是 `.goreleaser*.yaml`、`Dockerfile*`、`deploy/docker-compose*.yml` 三处的小补丁。

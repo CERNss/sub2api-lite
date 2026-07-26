@@ -11,19 +11,19 @@
 ## 2. 宿主机构建与运行
 
 ```bash
-cd /opt/sub2api-src/datamanagement
-go build -o /opt/sub2api/datamanagementd ./cmd/datamanagementd
+cd /opt/sub2api-lite-src/datamanagement
+go build -o /opt/sub2api-lite/datamanagementd ./cmd/datamanagementd
 
-mkdir -p /var/lib/sub2api/datamanagement
-chown -R sub2api:sub2api /var/lib/sub2api/datamanagement
+mkdir -p /var/lib/sub2api-lite/datamanagement
+chown -R sub2api:sub2api /var/lib/sub2api-lite/datamanagement
 ```
 
 手动启动示例：
 
 ```bash
-/opt/sub2api/datamanagementd \
+/opt/sub2api-lite/datamanagementd \
   -socket-path /tmp/sub2api-datamanagement.sock \
-  -sqlite-path /var/lib/sub2api/datamanagement/datamanagementd.db \
+  -sqlite-path /var/lib/sub2api-lite/datamanagement/datamanagementd.db \
   -version 1.0.0
 ```
 

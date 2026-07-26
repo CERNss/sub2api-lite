@@ -1,6 +1,6 @@
-# Sub2API Docker Image
+# Sub2API Lite Docker Image
 
-Sub2API is an AI API Gateway Platform for distributing and managing AI product subscription API quotas.
+Sub2API Lite is an AI API Gateway Platform for distributing and managing AI product subscription API quotas.
 
 ## Quick Start
 

@@ -1,7 +1,7 @@
 # =============================================================================
-# Sub2API Docker Compose - Standalone Configuration
+# Sub2API Lite Docker Compose - Standalone Configuration
 # =============================================================================
-# This configuration runs only the Sub2API application.
+# This configuration runs only the Sub2API Lite application.
 # PostgreSQL and Redis must be provided externally.
 #
 # Usage:
@@ -11,9 +11,9 @@
 # =============================================================================
 
 services:
-  sub2api:
+  sub2api-lite:
     image: cernss/sub2api-lite:latest
-    container_name: sub2api
+    container_name: sub2api-lite
     restart: unless-stopped
     ulimits:
       nofile:
@@ -22,7 +22,7 @@ services:
     ports:
       - "${BIND_HOST:-0.0.0.0}:${SERVER_PORT:-8080}:8080"
     volumes:
-      - sub2api_data:/app/data
+      - sub2api_lite_data:/app/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -120,5 +120,5 @@ services:
       start_period: 30s
 
 volumes:
-  sub2api_data:
+  sub2api_lite_data:
     driver: local

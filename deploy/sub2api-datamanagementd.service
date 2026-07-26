@@ -1,5 +1,5 @@
 [Unit]
-Description=Sub2API Data Management Daemon
+Description=Sub2API Lite Data Management Daemon
 After=network.target
 Wants=network.target
 
@@ -7,10 +7,10 @@ Wants=network.target
 Type=simple
 User=sub2api
 Group=sub2api
-WorkingDirectory=/opt/sub2api
-ExecStart=/opt/sub2api/datamanagementd \
+WorkingDirectory=/opt/sub2api-lite
+ExecStart=/opt/sub2api-lite/datamanagementd \
   -socket-path /tmp/sub2api-datamanagement.sock \
-  -sqlite-path /var/lib/sub2api/datamanagement/datamanagementd.db \
+  -sqlite-path /var/lib/sub2api-lite/datamanagement/datamanagementd.db \
   -version 1.0.0
 Restart=always
 RestartSec=5s

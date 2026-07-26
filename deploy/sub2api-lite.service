@@ -8,20 +8,20 @@ Wants=postgresql.service redis.service
 Type=simple
 User=sub2api
 Group=sub2api
-WorkingDirectory=/opt/sub2api
-ExecStart=/opt/sub2api/sub2api
+WorkingDirectory=/opt/sub2api-lite
+ExecStart=/opt/sub2api-lite/sub2api
 Restart=always
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=sub2api
+SyslogIdentifier=sub2api-lite
 
 # Security hardening
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
 PrivateTmp=true
-ReadWritePaths=/opt/sub2api
+ReadWritePaths=/opt/sub2api-lite
 
 # Environment - Server configuration
 # Modify these values to change listen address and port

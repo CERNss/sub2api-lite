@@ -125,7 +125,7 @@ main() {
 
     # Create data directories (all persistent data lives under ./data)
     print_info "Creating data directories..."
-    mkdir -p data/sub2api data/postgres data/redis
+    mkdir -p data/sub2api-lite data/postgres data/redis
     print_success "Created data directories"
 
     # Set secure permissions for .env file (readable/writable only by owner)
@@ -149,7 +149,7 @@ main() {
     echo "  docker-compose.yml        - Docker Compose configuration"
     echo "  .env                      - Environment variables (generated secrets)"
     echo "  .env.example              - Example template (for reference)"
-    echo "  data/sub2api/             - Application data (config.yaml auto-generated here)"
+    echo "  data/sub2api-lite/        - Application data (config.yaml auto-generated here)"
     echo "  data/postgres/            - PostgreSQL data"
     echo "  data/redis/               - Redis data"
     echo ""
@@ -159,7 +159,7 @@ main() {
     echo "     docker compose up -d"
     echo ""
     echo "  3. View logs:"
-    echo "     docker compose logs -f sub2api"
+    echo "     docker compose logs -f sub2api-lite"
     echo ""
     echo "  4. Access Web UI:"
     echo "     http://localhost:8080"

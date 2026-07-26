@@ -1,6 +1,6 @@
-# Sub2API Deployment Files
+# Sub2API Lite Deployment Files
 
-This directory contains files for deploying Sub2API on Linux servers.
+This directory contains files for deploying Sub2API Lite on Linux servers.
 
 ## Deployment Methods
 
@@ -20,7 +20,7 @@ This directory contains files for deploying Sub2API on Linux servers.
 | `DOCKER.md` | Docker Hub documentation |
 | `install.sh` | One-click binary installation script |
 | `install-datamanagementd.sh` | datamanagementd 一键安装脚本 |
-| `sub2api.service` | Systemd service unit file |
+| `sub2api-lite.service` | Systemd service unit file |
 | `sub2api-datamanagementd.service` | datamanagementd systemd service unit file |
 | `DATAMANAGEMENTD_CN.md` | datamanagementd 部署与联动说明（中文） |
 | `config.example.yaml` | Example configuration file |
@@ -56,10 +56,10 @@ chmod +x docker-deploy.sh
 docker compose -f docker-compose.local.yml up -d
 
 # View logs
-docker compose -f docker-compose.local.yml logs -f sub2api
+docker compose -f docker-compose.local.yml logs -f sub2api-lite
 
 # If admin password was auto-generated, find it in logs:
-docker compose -f docker-compose.local.yml logs sub2api | grep "admin password"
+docker compose -f docker-compose.local.yml logs sub2api-lite | grep "admin password"
 
 # Access Web UI
 # http://localhost:8080
@@ -85,13 +85,13 @@ echo "JWT_SECRET=${JWT_SECRET}" >> .env
 echo "TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY}" >> .env
 
 # Create data directories
-mkdir -p data postgres_data redis_data
+mkdir -p data/sub2api-lite data/postgres data/redis
 
 # Start all services using local directory version
 docker compose -f docker-compose.local.yml up -d
 
 # View logs (check for auto-generated admin password)
-docker compose -f docker-compose.local.yml logs -f sub2api
+docker compose -f docker-compose.local.yml logs -f sub2api-lite
 
 # Access Web UI
 # http://localhost:8080
@@ -121,7 +121,7 @@ When using Docker Compose with `AUTO_SETUP=true`:
 
 3. If `ADMIN_PASSWORD` is not set, check logs for the generated password:
    ```bash
-   docker compose logs sub2api | grep "admin password"
+   docker compose logs sub2api-lite | grep "admin password"
    ```
 
 ### Database Migration Notes (PostgreSQL)
@@ -168,10 +168,10 @@ docker compose -f docker-compose.local.yml up -d
 docker compose -f docker-compose.local.yml down
 
 # View logs
-docker compose -f docker-compose.local.yml logs -f sub2api
+docker compose -f docker-compose.local.yml logs -f sub2api-lite
 
-# Restart Sub2API only
-docker compose -f docker-compose.local.yml restart sub2api
+# Restart Sub2API Lite only
+docker compose -f docker-compose.local.yml restart sub2api-lite
 
 # Update to latest version
 docker compose -f docker-compose.local.yml pull
@@ -192,10 +192,10 @@ docker compose up -d
 docker compose down
 
 # View logs
-docker compose logs -f sub2api
+docker compose logs -f sub2api-lite
 
-# Restart Sub2API only
-docker compose restart sub2api
+# Restart Sub2API Lite only
+docker compose restart sub2api-lite
 
 # Update to latest version
 docker compose pull
@@ -234,13 +234,13 @@ When using `docker-compose.local.yml`, all data is stored in local directories, 
 cd /path/to/deployment
 docker compose -f docker-compose.local.yml down
 cd ..
-tar czf sub2api-complete.tar.gz deployment/
+tar czf sub2api-lite-complete.tar.gz deployment/
 
 # Transfer to new server
-scp sub2api-complete.tar.gz user@new-server:/path/to/destination/
+scp sub2api-lite-complete.tar.gz user@new-server:/path/to/destination/
 
 # On new server: Extract and start
-tar xzf sub2api-complete.tar.gz
+tar xzf sub2api-lite-complete.tar.gz
 cd deployment/
 docker compose -f docker-compose.local.yml up -d
 ```
@@ -251,7 +251,7 @@ Your entire deployment (configuration + data) is migrated!
 
 ## Gemini OAuth Configuration
 
-Sub2API supports three methods to connect to Gemini:
+Sub2API Lite supports three methods to connect to Gemini:
 
 ### Method 1: Code Assist OAuth (Recommended for GCP Users)
 
@@ -296,7 +296,7 @@ Requires your own OAuth client credentials.
    - Go to "APIs & Services" → "Credentials"
    - Click "Create Credentials" → "OAuth client ID"
    - Application type: **Web application** (or **Desktop app**)
-   - Name: e.g., "Sub2API Gemini"
+   - Name: e.g., "Sub2API Lite Gemini"
    - Authorized redirect URIs: Add `http://localhost:1455/auth/callback`
 6. Copy the **Client ID** and **Client Secret**
 7. **⚠️ Publish to Production (IMPORTANT):**
@@ -359,13 +359,13 @@ curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/main/deploy/inst
 ### Manual Installation
 
 1. Download the latest release from [GitHub Releases](https://github.com/CERNss/sub2api-lite/releases)
-2. Extract and copy the binary to `/opt/sub2api/`
-3. Copy `sub2api.service` to `/etc/systemd/system/`
+2. Extract and copy the binary to `/opt/sub2api-lite/`
+3. Copy `sub2api-lite.service` to `/etc/systemd/system/`
 4. Run:
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl enable sub2api
-   sudo systemctl start sub2api
+   sudo systemctl enable sub2api-lite
+   sudo systemctl start sub2api-lite
    ```
 5. Open the Setup Wizard in your browser to complete configuration
 
@@ -386,22 +386,22 @@ sudo ./install.sh uninstall
 
 ```bash
 # Start the service
-sudo systemctl start sub2api
+sudo systemctl start sub2api-lite
 
 # Stop the service
-sudo systemctl stop sub2api
+sudo systemctl stop sub2api-lite
 
 # Restart the service
-sudo systemctl restart sub2api
+sudo systemctl restart sub2api-lite
 
 # Check status
-sudo systemctl status sub2api
+sudo systemctl status sub2api-lite
 
 # View logs
-sudo journalctl -u sub2api -f
+sudo journalctl -u sub2api-lite -f
 
 # Enable auto-start on boot
-sudo systemctl enable sub2api
+sudo systemctl enable sub2api-lite
 ```
 
 ### Configuration
@@ -414,7 +414,7 @@ To change after installation:
 
 1. Edit the systemd service:
    ```bash
-   sudo systemctl edit sub2api
+   sudo systemctl edit sub2api-lite
    ```
 
 2. Add or modify:
@@ -427,7 +427,7 @@ To change after installation:
 3. Reload and restart:
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl restart sub2api
+   sudo systemctl restart sub2api-lite
    ```
 
 #### Gemini OAuth Configuration
@@ -436,7 +436,7 @@ If you need to use AI Studio OAuth for Gemini accounts, add the OAuth client cre
 
 1. Edit the service file:
    ```bash
-   sudo nano /etc/systemd/system/sub2api.service
+   sudo nano /etc/systemd/system/sub2api-lite.service
    ```
 
 2. Add your OAuth credentials in the `[Service]` section (after the existing `Environment=` lines):
@@ -453,7 +453,7 @@ If you need to use AI Studio OAuth for Gemini accounts, add the OAuth client cre
 3. Reload and restart:
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl restart sub2api
+   sudo systemctl restart sub2api-lite
    ```
 
 > **Note:** Code Assist OAuth does not require any configuration - it uses the built-in Gemini CLI client.
@@ -461,7 +461,7 @@ If you need to use AI Studio OAuth for Gemini accounts, add the OAuth client cre
 
 #### Application Configuration
 
-The main config file is at `/etc/sub2api/config.yaml` (created by Setup Wizard).
+The main config file is at `/etc/sub2api-lite/config.yaml` (created by Setup Wizard).
 
 ### Prerequisites
 
@@ -473,12 +473,12 @@ The main config file is at `/etc/sub2api/config.yaml` (created by Setup Wizard).
 ### Directory Structure
 
 ```
-/opt/sub2api/
+/opt/sub2api-lite/
 ├── sub2api              # Main binary
 ├── sub2api.backup       # Backup (after upgrade)
 └── data/                # Runtime data
 
-/etc/sub2api/
+/etc/sub2api-lite/
 └── config.yaml          # Configuration file
 ```
 
@@ -495,7 +495,7 @@ For **local directory version**:
 docker compose -f docker-compose.local.yml ps
 
 # View detailed logs
-docker compose -f docker-compose.local.yml logs --tail=100 sub2api
+docker compose -f docker-compose.local.yml logs --tail=100 sub2api-lite
 
 # Check database connection
 docker compose -f docker-compose.local.yml exec postgres pg_isready
@@ -517,7 +517,7 @@ For **named volumes version**:
 docker compose ps
 
 # View detailed logs
-docker compose logs --tail=100 sub2api
+docker compose logs --tail=100 sub2api-lite
 
 # Check database connection
 docker compose exec postgres pg_isready
@@ -533,13 +533,13 @@ docker compose restart
 
 ```bash
 # Check service status
-sudo systemctl status sub2api
+sudo systemctl status sub2api-lite
 
 # View recent logs
-sudo journalctl -u sub2api -n 50
+sudo journalctl -u sub2api-lite -n 50
 
 # Check config file
-sudo cat /etc/sub2api/config.yaml
+sudo cat /etc/sub2api-lite/config.yaml
 
 # Check PostgreSQL
 sudo systemctl status postgresql
@@ -559,7 +559,7 @@ sudo systemctl status redis
 
 ## TLS Fingerprint Configuration
 
-Sub2API supports TLS fingerprint simulation to make requests appear as if they come from the official Claude CLI (Node.js client).
+Sub2API Lite supports TLS fingerprint simulation to make requests appear as if they come from the official Claude CLI (Node.js client).
 
 > **💡 Tip:** Visit **[tls.sub2api.org](https://tls.sub2api.org/)** to get TLS fingerprint information for different devices and browsers.
 

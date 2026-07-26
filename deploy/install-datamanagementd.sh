@@ -9,8 +9,8 @@ set -euo pipefail
 
 BIN_PATH=""
 SOURCE_PATH=""
-INSTALL_DIR="/opt/sub2api"
-DATA_DIR="/var/lib/sub2api/datamanagement"
+INSTALL_DIR="/opt/sub2api-lite"
+DATA_DIR="/var/lib/sub2api-lite/datamanagement"
 SERVICE_FILE_NAME="sub2api-datamanagementd.service"
 
 function print_help() {

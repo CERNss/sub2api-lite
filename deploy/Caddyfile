@@ -95,7 +95,7 @@ api.sub2api.com {
 	# 日志配置
 	# =========================================================================
 	log {
-		output file /var/log/caddy/sub2api.log {
+		output file /var/log/caddy/sub2api-lite.log {
 			roll_size 50mb
 			roll_keep 10
 			roll_keep_for 720h
