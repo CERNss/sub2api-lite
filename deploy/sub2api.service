@@ -1,5 +1,5 @@
 [Unit]
-Description=Sub2API - AI API Gateway Platform
+Description=Sub2API Lite - AI API Gateway (subscription to API)
 Documentation=https://github.com/CERNss/sub2api-lite
 After=network.target postgresql.service redis.service
 Wants=postgresql.service redis.service
