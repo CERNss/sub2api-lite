@@ -15,8 +15,9 @@
   - [3. control-oidc-local-email-verification](#3-control-oidc-local-email-verification)
   - [4. refine-pending-oauth-account-resolution](#4-refine-pending-oauth-account-resolution)
   - [5. user-token-api-key-automation](#5-user-token-api-key-automation)
+  - [6. record-lite-scope-reduction](#6-record-lite-scope-reduction)
 - [Archived changes](#archived-changes)
-  - [6. support-mounted-frontend-client-templates](#6-support-mounted-frontend-client-templates)
+  - [7. support-mounted-frontend-client-templates](#7-support-mounted-frontend-client-templates)
 - [未纳入 OpenSpec 的客制化](#未纳入-openspec-的客制化)
 - [维护约定](#维护约定)
 
@@ -31,7 +32,8 @@
 | 3 | `control-oidc-local-email-verification`   | 🟢 active   | OIDC 专用开关跳过二次本地邮箱验证                | 0 | 19 |
 | 4 | `refine-pending-oauth-account-resolution` | 🟢 active   | OAuth 回调跳过 chooser、邮箱预填规则             | 0 | 6 |
 | 5 | `user-token-api-key-automation`           | 🟢 active   | 用户登录换 JWT 后创建 API key 并安全轮换 key 分组 | 1 | 8 |
-| 6 | `support-mounted-frontend-client-templates` | 📦 archived | 前端 `client-templates.json` 挂载渲染 Codex/OpenCode/CCS | 9 | ~6 |
+| 6 | `record-lite-scope-reduction`             | 🟢 active   | 固化销售侧六大子系统的删减边界与保留红线（含冒烟证据与残留修复） | 6 | 52 |
+| 7 | `support-mounted-frontend-client-templates` | 📦 archived | 前端 `client-templates.json` 挂载渲染 Codex/OpenCode/CCS | 9 | ~6 |
 
 **状态图例**
 
@@ -72,6 +74,8 @@ _无。本 change 全部为对上游文件的补丁。_
 
 #### ⚠ 跨 change 共享文件
 > 以下文件本 change 修改，**同时也被其他 change 修改**。rebase 解决冲突时，必须同时核对本 change 与对方 change 的修改是否都已包含。
+- `backend/internal/service/admin_service.go` → 也属于 #6
+- `backend/internal/server/api_contract_test.go` → 也属于 #5、#6
 - `README.md` → 也属于 #2
 - `README_CN.md` → 也属于 #2
 
@@ -111,11 +115,12 @@ _无。本 change 全部为对上游文件的补丁。_
 
 #### ⚠ 跨 change 共享文件
 > 以下文件本 change 修改，**同时也被其他 change 修改**。rebase 解决冲突时，必须同时核对本 change 与对方 change 的修改是否都已包含。
-- `backend/internal/handler/admin/setting_handler.go` → 也属于 #3
-- `backend/internal/handler/dto/settings.go` → 也属于 #3
-- `backend/internal/service/setting_service.go` → 也属于 #3
+- `backend/internal/handler/admin/setting_handler.go` → 也属于 #3、#6
+- `backend/internal/handler/dto/settings.go` → 也属于 #3、#6
+- `backend/internal/service/setting_service.go` → 也属于 #3、#6
 - `frontend/src/views/admin/SettingsView.vue` → 也属于 #3
-- `frontend/src/types/index.ts` → 也属于 #5
+- `frontend/src/types/index.ts` → 也属于 #5、#6
+- `frontend/src/components/layout/AppSidebar.vue` → 也属于 #6
 - `README.md` → 也属于 #1
 - `README_CN.md` → 也属于 #1
 
@@ -163,12 +168,17 @@ _无。_
 
 #### ⚠ 跨 change 共享文件
 > 以下文件本 change 修改，**同时也被其他 change 修改**。rebase 解决冲突时，必须同时核对本 change 与对方 change 的修改是否都已包含。
-- `backend/internal/handler/admin/setting_handler.go` → 也属于 #2
-- `backend/internal/handler/dto/settings.go` → 也属于 #2
-- `backend/internal/service/setting_service.go` → 也属于 #2
+- `backend/internal/handler/admin/setting_handler.go` → 也属于 #2、#6
+- `backend/internal/handler/dto/settings.go` → 也属于 #2、#6
+- `backend/internal/service/setting_service.go` → 也属于 #2、#6
 - `frontend/src/views/admin/SettingsView.vue` → 也属于 #2
 - `frontend/src/views/auth/OidcCallbackView.vue` → 也属于 #4
 - `frontend/src/views/auth/__tests__/OidcCallbackView.spec.ts` → 也属于 #4
+- `backend/internal/service/domain_constants.go` → 也属于 #6
+- `backend/internal/handler/auth_oauth_pending_flow.go` → 也属于 #6
+- `backend/internal/handler/auth_oidc_oauth.go` → 也属于 #6
+- `backend/internal/service/auth_oauth_email_flow.go` → 也属于 #6
+- `frontend/src/i18n/locales/en.ts`、`zh.ts` → 也属于 #6
 
 #### 关联 commits
 - `320e10f9` fix(auth): propagate OIDC local email verification state
@@ -235,7 +245,10 @@ _无。_
 #### ⚠ 跨 change 共享文件
 > 以下文件本 change 修改，**同时也被其他 change 修改**。rebase 解决冲突时，必须同时核对本 change 与对方 change 的修改是否都已包含。
 - `backend/internal/service/api_key_service.go` → 也属于 #1
-- `backend/internal/server/api_contract_test.go` → 也属于 #1
+- `backend/internal/server/api_contract_test.go` → 也属于 #1、#6
+- `backend/internal/server/routes/auth.go` → 也属于 #6
+- `backend/internal/server/routes/user.go` → 也属于 #6
+- `frontend/src/api/auth.ts` → 也属于 #6
 - `README.md` → 也属于 #1、#2
 
 #### 关联 commits
@@ -243,11 +256,99 @@ _待提交。_
 
 ---
 
+---
+
+### 6. `record-lite-scope-reduction`
+
+- **Capabilities:** `lite-scope-boundary`、`lite-retained-surface`
+- **意图:** 把 `develop-lite` 相对上游删掉的六大销售侧子系统（支付 / 分销返利 / 优惠码 / 公告 / 用户自助兑换 / 邀请码注册门禁）固化为可验证的 spec，并同时锁定**刻意保留**的部分，避免后续清理误删。
+- **规模:** commit 区间 `ad3f36c65..c8d28dc09`，385 files changed，+15,852 / −103,928，删除文件 241 个，drop 9 张表。
+- **⚠ rebase 时的关键点:** 上游会持续演进这六个子系统。rebase 后**冲突文件默认取本地删除侧**，然后按本条的「上游补丁」清单逐个复核；`backend/migrations/154_drop_sales_tables.sql` 必须仍在，且历史 migration（033/045/068/092/102/111/112/117/119/120/120a/130~134）不得被改写。
+- **Spec 路径:** `openspec/changes/record-lite-scope-reduction/`
+- **完整删减清单 / 保留红线 / 冒烟证据 / 残留待办:** 见该目录下 `design.md`
+
+#### 新增文件
+| 路径 | 用途 |
+|------|------|
+| `backend/migrations/154_drop_sales_tables.sql` | 按外键顺序 drop 9 张销售侧表，保留 `redeem_codes` |
+| `openspec/changes/record-lite-scope-reduction/proposal.md` | 提案 |
+| `openspec/changes/record-lite-scope-reduction/design.md` | 完整删减清单 + 保留理由 + 冒烟记录 + 残留 R1–R15 |
+| `openspec/changes/record-lite-scope-reduction/tasks.md` | 已完成动作与待清理残留 |
+| `openspec/changes/record-lite-scope-reduction/specs/lite-scope-boundary/spec.md` | 删减边界需求 |
+| `openspec/changes/record-lite-scope-reduction/specs/lite-retained-surface/spec.md` | 保留面需求 |
+
+#### 上游补丁（rebase 后必须确认删除仍生效）
+| 路径 | 改动要点 |
+|------|---------|
+| `backend/internal/server/routes/admin.go` | 移除 announcements / redeem-codes / promo-codes / affiliates 路由组 |
+| `backend/internal/server/routes/auth.go` | 移除 `validate-promo-code`、`validate-invitation-code`、微信支付 OAuth |
+| `backend/internal/server/routes/user.go` | 移除 `/aff`、`/aff/transfer`、`/announcements`、`/redeem` |
+| `backend/internal/service/setting_service.go` | 删除支付/优惠码/分销/邀请码设置键的持久化与校验 |
+| `backend/internal/service/domain_constants.go` | 删除对应 SettingKey 常量 |
+| `backend/internal/handler/dto/settings.go` | 删除对应 DTO 字段 |
+| `backend/internal/handler/admin/setting_handler.go` | 删除 admin 设置透传与审计 diff |
+| `backend/internal/service/auth_service.go` | 注册流程去掉邀请码/优惠码/分销绑定 |
+| `backend/internal/service/auth_oauth_email_flow.go` | OAuth 邮箱注册去掉邀请码校验与分销透传 |
+| `backend/internal/service/auth_email_oauth_auto.go` | 自动注册路径去掉邀请码线索 |
+| `backend/internal/service/admin_service.go` | 余额历史不再 UNION 已删的 `user_affiliate_ledger` |
+| `backend/internal/handler/auth_oidc_oauth.go` | 去掉邀请码门禁 |
+| `backend/internal/handler/auth_linuxdo_oauth.go` | 同上 |
+| `backend/internal/handler/auth_wechat_oauth.go` | 同上 |
+| `backend/internal/handler/auth_dingtalk_oauth.go` | 同上 |
+| `backend/internal/handler/auth_email_oauth.go` | 同上 |
+| `backend/internal/handler/auth_oauth_pending_flow.go` | 去掉 `invitation_required` pending 状态 |
+| `backend/cmd/server/wire.go` / `wire_gen.go` | 去掉支付/分销/公告依赖注入 |
+| `backend/internal/server/api_contract_test.go` | 契约测试同步删除条目 |
+| `backend/go.mod` / `go.sum` | tidy 移除 Stripe/Alipay/WeChatPay/decimal 等无 import 支付依赖（R16） |
+| `backend/internal/config/config.go` | `DefaultCSPPolicy` 去掉 Stripe/Airwallex 域名（R18） |
+| `backend/internal/server/middleware/security_headers.go`（+test） | 删除支付 SDK 域名常量与 CSP 注入规则；测试改负向断言（R18） |
+| `backend/internal/server/middleware/backend_mode_guard.go`（+test） | 删除微信支付回调白名单项；用例翻转为 Forbidden（R12） |
+| `frontend/src/router/README.md` | 路由文档移除已删 redeem 条目（R3） |
+| `frontend/src/router/__tests__/guards.spec.ts` | 复刻守卫去支付路径 + 负向用例（R12） |
+| `frontend/src/components/user/dashboard/UserDashboardQuickActions.vue` | 删除指向已删 `/redeem` 的快捷入口（R3） |
+| `frontend/src/api/auth.ts` | 删除 promo/invitation API 与 `validatePromoCode` helper（R11） |
+| `frontend/src/router/index.ts` | 删除 20 条销售侧路由 |
+| `frontend/src/components/layout/AppSidebar.vue` | 删除对应菜单项 |
+| `frontend/src/views/auth/RegisterView.vue` | 去掉邀请码输入 |
+| `frontend/src/api/auth.ts` / `api/user.ts` / `api/admin/settings.ts` | 删除对应 API 与类型 |
+| `frontend/src/i18n/locales/en.ts` / `zh.ts` | 删除 1382 行销售侧文案 |
+| `frontend/src/stores/app.ts` / `frontend/src/types/index.ts` | 删除公共设置字段与类型 |
+| `deploy/docker-compose.local.yml` / `deploy/docker-deploy.sh` | 持久化目录收敛到 `./data` |
+| `README.md` / `README_JA.md` | 删除支付文档引用 |
+
+#### ⚠ 跨 change 共享文件
+> 以下文件本 change 修改，**同时也被其他 change 修改**。rebase 解决冲突时，必须同时核对本 change 与对方 change 的修改是否都已包含。
+- `backend/internal/handler/admin/setting_handler.go` → 也属于 #2、#3
+- `backend/internal/handler/dto/settings.go` → 也属于 #2、#3
+- `backend/internal/service/setting_service.go` → 也属于 #2、#3
+- `backend/internal/service/domain_constants.go` → 也属于 #3
+- `backend/internal/service/admin_service.go` → 也属于 #1
+- `backend/internal/server/api_contract_test.go` → 也属于 #1、#5
+- `backend/internal/server/routes/auth.go` → 也属于 #5
+- `backend/internal/server/routes/user.go` → 也属于 #5
+- `backend/internal/handler/auth_oauth_pending_flow.go` → 也属于 #3
+- `backend/internal/handler/auth_oidc_oauth.go` → 也属于 #3
+- `backend/internal/service/auth_oauth_email_flow.go` → 也属于 #3
+- `frontend/src/components/layout/AppSidebar.vue` → 也属于 #2
+- `frontend/src/api/auth.ts` → 也属于 #5
+- `frontend/src/types/index.ts` → 也属于 #2、#7
+- `frontend/src/i18n/locales/en.ts`、`zh.ts` → 也属于 #3
+- `deploy/docker-compose.local.yml` → 也属于 #7
+
+#### 关联 commits
+- `92e839574` refactor!: remove sales-side subsystems for internal-platform use
+- `4c480ce66` refactor: purge residual sales-side settings, affiliate plumbing, and dead assets
+- `1a342fcc3` refactor!: remove invitation-code registration gating
+- `4f1413a96` chore: drop dead affiliate leftovers flagged by golangci
+- `c8d28dc09` refactor(deploy)!: consolidate persistent data under ./data for lite deploys
+
+---
+
 ## Archived changes
 
 > 已 archive 的 change 也仍然存在于 `develop` 上，上游 rebase 同样会冲突。在彻底进入上游之前必须照顾。
 
-### 6. `support-mounted-frontend-client-templates`
+### 7. `support-mounted-frontend-client-templates`
 
 - **Capabilities:** `frontend-client-template-loading`、`key-client-template-rendering`
 - **意图:** 让前端无需后端配合就能加载 mount 在 `/client-templates.json` 的运行时模板，并据此渲染 Codex / Codex WS / OpenCode / CCS 导入。
@@ -280,7 +381,8 @@ _待提交。_
 
 #### ⚠ 跨 change 共享文件
 > 以下文件本 change 修改，**同时也被其他 change 修改**。rebase 解决冲突时，必须同时核对本 change 与对方 change 的修改是否都已包含。
-- `frontend/src/types/index.ts` → 也属于 #2
+- `frontend/src/types/index.ts` → 也属于 #2、#6
+- `deploy/docker-compose.local.yml` → 也属于 #6
 
 #### 关联 commits
 - `174e6e50` fix(frontend): restore client template loading（rebase 后修复）
