@@ -2,8 +2,9 @@ schema: spec-driven
 
 # Project context (optional)
 context: |
-  This repo is a fork of upstream `jhs-sub2api/sub2api`.
-  Branch model: `main` mirrors upstream; `develop` carries all customizations and is rebased onto `main` every upstream sync.
+  This repo is a fork of upstream `Wei-Shaw/sub2api`, evolving independently since 2026-07.
+  Branch model: `main` is the canonical branch (formerly `develop-lite`; both names point at the
+  same history). If upstream sync is ever resumed, rebase onto the upstream main as base.
   Every OpenSpec change is also a fork-overlay entry tracked in `openspec/FORK.md`.
   When a change is added/archived/modified, FORK.md MUST be updated in the same commit.
 

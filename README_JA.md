@@ -171,7 +171,7 @@ GitHub Releases からビルド済みバイナリをダウンロードするワ�
 #### インストール手順
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/develop-lite/deploy/install.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/main/deploy/install.sh | sudo bash
 ```
 
 スクリプトは以下を実行します:
@@ -221,7 +221,7 @@ sudo journalctl -u sub2api -f
 sudo systemctl restart sub2api
 
 # アンインストール
-curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/develop-lite/deploy/install.sh | sudo bash -s -- uninstall -y
+curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/main/deploy/install.sh | sudo bash -s -- uninstall -y
 ```
 
 ---
@@ -244,7 +244,7 @@ PostgreSQL と Redis のコンテナを含む Docker Compose でデプロイし�
 mkdir -p sub2api-deploy && cd sub2api-deploy
 
 # デプロイ準備スクリプトをダウンロードして実行
-curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/develop-lite/deploy/docker-deploy.sh | bash
+curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/main/deploy/docker-deploy.sh | bash
 
 # サービスを起動
 docker compose up -d

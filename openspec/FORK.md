@@ -1,8 +1,9 @@
 # Fork Overlay
 
-> 单一事实来源（single source of truth），列出本仓库 `develop` 相对上游 `main` 的所有客制化。
-> 上游同步流程：拉取 `jhs-sub2api/main` → 更新本地 `main` → `develop` rebase 到新 `main`。
-> rebase 之后，请按本文逐项核对，**新增文件**通常无冲突，**Upstream patches** 是真正可能丢失的部分。
+> 单一事实来源（single source of truth），列出本仓库相对上游 `Wei-Shaw/sub2api` 的所有客制化。
+> **分支模型（2026-07 起）**：本 fork 独立演进，规范分支为 `main`（原 `develop-lite`，两名指向同一历史）。
+> 若未来重新同步上游：以上游 main 为 base 做 rebase，之后按本文逐项核对 ——
+> **新增文件**通常无冲突，**Upstream patches** 是真正可能丢失的部分。
 
 ---
 
@@ -307,8 +308,8 @@ _待提交。_
 | `frontend/src/router/__tests__/guards.spec.ts` | 复刻守卫去支付路径 + 负向用例（R12） |
 | `frontend/src/components/user/dashboard/UserDashboardQuickActions.vue` | 删除指向已删 `/redeem` 的快捷入口（R3） |
 | `frontend/src/api/auth.ts` | 删除 promo/invitation API 与 `validatePromoCode` helper（R11） |
-| `deploy/README.md` | 安装命令 URL 改指 `develop-lite`（R15，本 fork 无 `main` 分支） |
-| `backend/internal/service/admin_compliance.go` | 合规文档 URL `blob/main` → `blob/develop-lite`（R15） |
+| `deploy/README.md` | 安装命令 URL 指向规范分支 `main`（R15） |
+| `backend/internal/service/admin_compliance.go` | 合规文档 URL 指向规范分支 `main`（R15） |
 | `frontend/src/stores/adminCompliance.ts` | 合规文档 fallback URL 同步（R15） |
 | `frontend/src/components/admin/AdminComplianceDialog.vue` | 同上（R15） |
 | `frontend/src/router/index.ts` | 删除 20 条销售侧路由 |

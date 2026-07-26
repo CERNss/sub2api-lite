@@ -2,7 +2,7 @@
 #
 # Sub2API Lite Installation Script
 # Sub2API Lite 安装脚本
-# Usage: curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/develop-lite/deploy/install.sh | bash
+# Usage: curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/main/deploy/install.sh | bash
 #
 
 set -e
