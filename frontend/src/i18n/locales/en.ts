@@ -681,9 +681,7 @@ export default {
     createApiKey: 'Create API Key',
     generateNewKey: 'Generate a new API key',
     viewUsage: 'View Usage',
-    checkDetailedLogs: 'Check detailed usage logs',
-    redeemCode: 'Redeem Code',
-    addBalanceWithCode: 'Add balance with a code'
+    checkDetailedLogs: 'Check detailed usage logs'
   },
 
   // Groups (shared)

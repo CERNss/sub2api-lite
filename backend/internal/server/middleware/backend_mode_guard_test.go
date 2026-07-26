@@ -229,10 +229,11 @@ func TestBackendModeAuthGuard(t *testing.T) {
 			wantStatus: http.StatusForbidden,
 		},
 		{
-			name:       "enabled_allows_wechat_payment_oauth_callback",
+			// lite: 微信支付 OAuth 已随支付子系统删除，回调不再在白名单内。
+			name:       "enabled_blocks_removed_wechat_payment_oauth_callback",
 			enabled:    "true",
 			path:       "/api/v1/auth/oauth/wechat/payment/callback",
-			wantStatus: http.StatusOK,
+			wantStatus: http.StatusForbidden,
 		},
 		{
 			name:       "enabled_blocks_oidc_oauth_start",

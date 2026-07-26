@@ -187,9 +187,6 @@ func (h *AuthHandler) emailOAuthCallbackWithProfile(
 		input,
 	)
 	if err != nil {
-		if false {
-			return
-		}
 		redirectOAuthError(c, frontendCallback, infraerrors.Reason(err), infraerrors.Message(err), "")
 		return
 	}

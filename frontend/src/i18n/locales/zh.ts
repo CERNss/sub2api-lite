@@ -681,9 +681,7 @@ export default {
     createApiKey: '创建 API 密钥',
     generateNewKey: '生成新的 API 密钥',
     viewUsage: '查看使用记录',
-    checkDetailedLogs: '查看详细的使用日志',
-    redeemCode: '兑换码',
-    addBalanceWithCode: '使用兑换码充值'
+    checkDetailedLogs: '查看详细的使用日志'
   },
 
   // Groups (shared)

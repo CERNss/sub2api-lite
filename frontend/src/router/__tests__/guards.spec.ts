@@ -84,13 +84,12 @@ function simulateGuard(
       return authState.isAdmin ? '/admin/dashboard' : '/dashboard'
     }
     if (authState.backendModeEnabled && !authState.isAuthenticated) {
-      const allowed = ['/login', '/key-usage', '/setup', '/payment/result']
+      const allowed = ['/login', '/key-usage', '/setup']
       const callbackPaths = [
         '/auth/callback',
         '/auth/linuxdo/callback',
         '/auth/oidc/callback',
         '/auth/wechat/callback',
-        '/auth/wechat/payment/callback',
       ]
       const pendingAuthPaths = ['/register', '/email-verify']
       const isAllowed =
@@ -131,13 +130,12 @@ function simulateGuard(
     if (authState.isAuthenticated && authState.isAdmin) {
       return null
     }
-    const allowed = ['/login', '/key-usage', '/setup', '/payment/result']
+    const allowed = ['/login', '/key-usage', '/setup']
     const callbackPaths = [
       '/auth/callback',
       '/auth/linuxdo/callback',
       '/auth/oidc/callback',
       '/auth/wechat/callback',
-      '/auth/wechat/payment/callback',
     ]
     const pendingAuthPaths = ['/register', '/email-verify']
     const isAllowed =
@@ -468,7 +466,8 @@ describe('路由守卫逻辑', () => {
       expect(redirect).toBeNull()
     })
 
-    it('unauthenticated: WeChat payment callback route is allowed', () => {
+    // lite: 支付路由已删除，/payment/* 与微信支付回调不再属于 backend-mode 白名单。
+    it('unauthenticated: removed payment routes redirect to login', () => {
       const authState: MockAuthState = {
         isAuthenticated: false,
         isAdmin: false,
@@ -476,20 +475,8 @@ describe('路由守卫逻辑', () => {
         backendModeEnabled: true,
         hasPendingAuthSession: false,
       }
-      const redirect = simulateGuard('/auth/wechat/payment/callback', { requiresAuth: false }, authState)
-      expect(redirect).toBeNull()
-    })
-
-    it('unauthenticated: /payment/result is allowed', () => {
-      const authState: MockAuthState = {
-        isAuthenticated: false,
-        isAdmin: false,
-        isSimpleMode: false,
-        backendModeEnabled: true,
-        hasPendingAuthSession: false,
-      }
-      const redirect = simulateGuard('/payment/result', { requiresAuth: false }, authState)
-      expect(redirect).toBeNull()
+      expect(simulateGuard('/auth/wechat/payment/callback', { requiresAuth: false }, authState)).toBe('/login')
+      expect(simulateGuard('/payment/result', { requiresAuth: false }, authState)).toBe('/login')
     })
 
     it('unauthenticated: /register is allowed when a pending auth session exists', () => {

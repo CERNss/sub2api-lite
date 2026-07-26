@@ -1,4 +1,6 @@
-FROM golang:1.26.4-alpine
+# Keep the Go patch version in sync with go.mod (alpine images run
+# GOTOOLCHAIN=local, so an older image cannot satisfy a newer go.mod).
+FROM golang:1.26.5-alpine
 
 WORKDIR /app
 

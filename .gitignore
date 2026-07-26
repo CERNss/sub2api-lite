@@ -104,6 +104,8 @@ backend/internal/web/dist/*
 
 # 后端运行时缓存数据
 backend/data/
+# 从仓库根目录运行 server 时 pricing.data_dir=./data 落盘的缓存（勿提交）
+/data/
 
 # ===================
 # 本地配置文件（包含敏感信息）

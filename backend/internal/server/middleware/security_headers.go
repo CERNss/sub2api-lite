@@ -18,16 +18,6 @@ const (
 	NonceTemplate = "__CSP_NONCE__"
 	// CloudflareInsightsDomain is the domain for Cloudflare Web Analytics
 	CloudflareInsightsDomain = "https://static.cloudflareinsights.com"
-	// StripeDomain is the domain for Stripe.js SDK
-	StripeDomain = "https://*.stripe.com"
-	// AirwallexStaticDomain 是 Airwallex 生产环境 SDK 脚本域名。
-	AirwallexStaticDomain = "https://static.airwallex.com"
-	// AirwallexCheckoutDomain 是 Airwallex 生产环境收银台元素和 iframe 域名。
-	AirwallexCheckoutDomain = "https://checkout.airwallex.com"
-	// AirwallexDemoStaticDomain 是 Airwallex 沙箱环境 SDK 脚本域名。
-	AirwallexDemoStaticDomain = "https://static-demo.airwallex.com"
-	// AirwallexDemoCheckoutDomain 是 Airwallex 沙箱环境收银台元素和 iframe 域名。
-	AirwallexDemoCheckoutDomain = "https://checkout-demo.airwallex.com"
 )
 
 var requiredCSPDirectiveValues = []struct {
@@ -35,18 +25,6 @@ var requiredCSPDirectiveValues = []struct {
 	value     string
 }{
 	{"script-src", CloudflareInsightsDomain},
-	{"script-src", StripeDomain},
-	{"frame-src", StripeDomain},
-	{"script-src", AirwallexStaticDomain},
-	{"script-src", AirwallexCheckoutDomain},
-	{"style-src", AirwallexStaticDomain},
-	{"style-src", AirwallexCheckoutDomain},
-	{"frame-src", AirwallexCheckoutDomain},
-	{"script-src", AirwallexDemoStaticDomain},
-	{"script-src", AirwallexDemoCheckoutDomain},
-	{"style-src", AirwallexDemoStaticDomain},
-	{"style-src", AirwallexDemoCheckoutDomain},
-	{"frame-src", AirwallexDemoCheckoutDomain},
 }
 
 // GenerateNonce generates a cryptographically secure random nonce.
