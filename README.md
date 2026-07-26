@@ -370,7 +370,7 @@ Use the automated deployment script for easy setup:
 
 ```bash
 # Create deployment directory
-mkdir -p sub2api-lite && cd sub2api-lite
+mkdir -p sub2api-lite-deploy && cd sub2api-lite-deploy
 
 # Download and run deployment preparation script
 curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/main/deploy/docker-deploy.sh | bash
@@ -489,14 +489,14 @@ When using `docker-compose.local.yml`, migrate to a new server easily:
 # On source server
 docker compose -f docker-compose.local.yml down
 cd ..
-tar czf sub2api-lite-complete.tar.gz sub2api-lite/
+tar czf sub2api-lite-complete.tar.gz sub2api-lite-deploy/
 
 # Transfer to new server
 scp sub2api-lite-complete.tar.gz user@new-server:/path/
 
 # On new server
 tar xzf sub2api-lite-complete.tar.gz
-cd sub2api-lite/
+cd sub2api-lite-deploy/
 docker compose -f docker-compose.local.yml up -d
 ```
 

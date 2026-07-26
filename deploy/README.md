@@ -72,7 +72,7 @@ If you prefer manual control:
 ```bash
 # Clone repository
 git clone https://github.com/CERNss/sub2api-lite.git
-cd sub2api/deploy
+cd sub2api-lite/deploy
 
 # Configure environment
 cp .env.example .env

@@ -241,7 +241,7 @@ PostgreSQL と Redis のコンテナを含む Docker Compose でデプロイし�
 
 ```bash
 # デプロイ用ディレクトリを作成
-mkdir -p sub2api-lite && cd sub2api-lite
+mkdir -p sub2api-lite-deploy && cd sub2api-lite-deploy
 
 # デプロイ準備スクリプトをダウンロードして実行
 curl -sSL https://raw.githubusercontent.com/CERNss/sub2api-lite/main/deploy/docker-deploy.sh | bash
@@ -360,14 +360,14 @@ docker compose -f docker-compose.local.yml up -d
 # 移行元サーバーにて
 docker compose -f docker-compose.local.yml down
 cd ..
-tar czf sub2api-lite-complete.tar.gz sub2api-lite/
+tar czf sub2api-lite-complete.tar.gz sub2api-lite-deploy/
 
 # 新しいサーバーに転送
 scp sub2api-lite-complete.tar.gz user@new-server:/path/
 
 # 移行先サーバーにて
 tar xzf sub2api-lite-complete.tar.gz
-cd sub2api-lite/
+cd sub2api-lite-deploy/
 docker compose -f docker-compose.local.yml up -d
 ```
 
