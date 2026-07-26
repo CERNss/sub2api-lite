@@ -54,7 +54,7 @@
 - [ ] 4.3.8 **R12** 已完成：`backend_mode_guard.go` 微信支付回调白名单项删除（对应测试翻转为 Forbidden）；`guards.spec.ts` 复刻数组中的支付路径删除并新增负向用例。仍待办：把 `guards.spec.ts` 改为 import 真实守卫实现，而不是复刻一份（当前复刻还缺 `/legal`、dingtalk 回调等真实项）。
 - [ ] 4.3.9 **R13** 清理 `mergeBalanceHistoryCodes` 的空参数与各处孤立注释。
 - [ ] 4.3.10 **R14** 清理遗留 i18n 命名空间。
-- [ ] 4.3.11 **R15** 把合规文档链接从 `blob/main` 改为 `blob/develop-lite`（本 fork 无 `main` 分支）。
+- [x] 4.3.11 **R15** 把指向不存在的 `main` 分支的链接全部改为 `develop-lite`：合规文档常量（`admin_compliance.go`）、前端 fallback（`adminCompliance.ts` / `AdminComplianceDialog.vue`）、README / README_JA / `deploy/README.md` 的 curl 安装命令（用户实测 404 触发）。
 
 ## 5. Codex review 轮次修复（2026-07-26，已完成）
 

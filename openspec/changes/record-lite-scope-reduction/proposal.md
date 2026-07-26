@@ -96,8 +96,12 @@
 - `frontend/src/types/index.ts`: 删除对应公共设置类型。
 - `deploy/docker-compose.local.yml`: 持久化目录收敛到 `./data`。
 - `deploy/docker-deploy.sh`: 同上，并改为 compose v2 语法。
-- `README.md`: 删除支付文档引用；Go 版本徽章对齐 go.mod。
+- `README.md`: 删除支付文档引用；Go 版本徽章对齐 go.mod；安装命令 URL 改指 `develop-lite`。
 - `README_JA.md`: 同上。
+- `deploy/README.md`: 安装命令 URL 改指 `develop-lite`（本 fork 无 `main` 分支）。
+- `backend/internal/service/admin_compliance.go`: 合规文档 URL 从 `blob/main` 改为 `blob/develop-lite`。
+- `frontend/src/stores/adminCompliance.ts`: 合规文档 fallback URL 同步。
+- `frontend/src/components/admin/AdminComplianceDialog.vue`: 同上。
 
 ### Shared Touchpoints
 - `backend/internal/handler/admin/setting_handler.go`: also owned by `add-external-custom-menu-token-open` and `control-oidc-local-email-verification` — 三者都改 admin 设置透传；本 change 删销售侧字段，对方两个加自己的字段，rebase 时三份改动都要在。

@@ -32,7 +32,7 @@
 | 3 | `control-oidc-local-email-verification`   | 🟢 active   | OIDC 专用开关跳过二次本地邮箱验证                | 0 | 19 |
 | 4 | `refine-pending-oauth-account-resolution` | 🟢 active   | OAuth 回调跳过 chooser、邮箱预填规则             | 0 | 6 |
 | 5 | `user-token-api-key-automation`           | 🟢 active   | 用户登录换 JWT 后创建 API key 并安全轮换 key 分组 | 1 | 8 |
-| 6 | `record-lite-scope-reduction`             | 🟢 active   | 固化销售侧六大子系统的删减边界与保留红线（含冒烟证据与残留修复） | 6 | 52 |
+| 6 | `record-lite-scope-reduction`             | 🟢 active   | 固化销售侧六大子系统的删减边界与保留红线（含冒烟证据与残留修复） | 6 | 56 |
 | 7 | `support-mounted-frontend-client-templates` | 📦 archived | 前端 `client-templates.json` 挂载渲染 Codex/OpenCode/CCS | 9 | ~6 |
 
 **状态图例**
@@ -307,6 +307,10 @@ _待提交。_
 | `frontend/src/router/__tests__/guards.spec.ts` | 复刻守卫去支付路径 + 负向用例（R12） |
 | `frontend/src/components/user/dashboard/UserDashboardQuickActions.vue` | 删除指向已删 `/redeem` 的快捷入口（R3） |
 | `frontend/src/api/auth.ts` | 删除 promo/invitation API 与 `validatePromoCode` helper（R11） |
+| `deploy/README.md` | 安装命令 URL 改指 `develop-lite`（R15，本 fork 无 `main` 分支） |
+| `backend/internal/service/admin_compliance.go` | 合规文档 URL `blob/main` → `blob/develop-lite`（R15） |
+| `frontend/src/stores/adminCompliance.ts` | 合规文档 fallback URL 同步（R15） |
+| `frontend/src/components/admin/AdminComplianceDialog.vue` | 同上（R15） |
 | `frontend/src/router/index.ts` | 删除 20 条销售侧路由 |
 | `frontend/src/components/layout/AppSidebar.vue` | 删除对应菜单项 |
 | `frontend/src/views/auth/RegisterView.vue` | 去掉邀请码输入 |
